@@ -1,0 +1,40 @@
+name: Update surf data
+
+on:
+  schedule:
+    # Times are UTC. During daylight saving this is 5am, noon and 8pm Eastern;
+    # in winter it shifts to 4am, 11am and 7pm. Adjust here if that bothers you.
+    - cron: '0 0,9,16 * * *'
+  workflow_dispatch:        # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: surf-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch forecast
+        run: python build.py
+
+      - name: Commit if anything changed
+        run: |
+          git config user.name  "surf-bot"
+          git config user.email "surf-bot@users.noreply.github.com"
+          if git diff --quiet -- data.json; then
+            echo "no change"
+          else
+            git add data.json
+            git commit -m "surf data $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi

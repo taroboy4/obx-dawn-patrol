@@ -1,0 +1,1112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Daily Outer Banks surf report - every break from Corolla to Ocracoke, scored for your level and your home base.">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>OBX Dawn Patrol</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&amp;family=Familjen+Grotesk:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap">
+<style>
+:root{
+  /* Sunrise over the Atlantic, painted into the page itself. These beaches
+     face east; the top of the page is the sky, and it settles into sand.
+     Deliberately single-theme — every colour is stated, none inherited. */
+  --ground:#FDF6EC; --surface:#FFFFFF; --surface-2:#FFFAF3; --sunk:#FBE7D2;
+  --ink:#3A1608; --ink-2:#6A3A22; --muted:#8A6350;
+  --line:#F2D9BE; --line-2:#F9EADA;
+  --sun:#FF6A2B; --sun-text:#C43C08; --sun-soft:#FFE6D6;
+  --sea:#06B3A8; --sea-text:#07736C; --sea-soft:#D5F4F1;
+  --gold:#FFB01F; --gold-text:#8F6207; --rose:#FF7E9E; --sun-deep:#8A2703;
+  --f0:#D9C6B6; --f1:#FFB01F; --f2:#06B3A8; --f3:#2FBE74; --f4:#FF5A2B;
+  --q0:#7A6154; --q1:#8F6207; --q2:#07736C; --q3:#14764B; --q4:#C43C08;
+  --good:#14764B; --warn:#8F6207; --crit:#A02D04;
+  --good-bg:#D8F5E4; --warn-bg:#FFEFCC; --crit-bg:#FFE2D6;
+  --sky-1:#FF9BB0; --sky-2:#FFAE86; --sky-3:#FFC77F; --sky-4:#FFE3BC; --sky-5:#FDF6EC;
+  --day-mid:#7FD3E4;
+  --shadow:0 1px 2px rgba(120,60,20,.07), 0 14px 36px -18px rgba(120,60,20,.32);
+  --display:'Alfa Slab One',Rockwell,Georgia,serif;
+  --body:'Familjen Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'Space Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--ground);color:var(--ink);font-family:var(--body);
+     background-image:linear-gradient(180deg,var(--sky-1) 0,var(--sky-2) 130px,var(--sky-3) 260px,var(--sky-4) 400px,var(--sky-5) 560px);
+     background-repeat:no-repeat;background-size:100% 560px;
+     font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px 80px;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{margin:0;text-wrap:balance}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+         color:var(--muted);font-weight:700}
+
+/* ---- the lighthouse rule: Hatteras spiral as a diagonal barber stripe ---- */
+.spiral{height:8px;border-radius:1px;
+  background:repeating-linear-gradient(118deg,var(--ink) 0 6px,transparent 6px 13px);
+  opacity:.85}
+
+/* ---- masthead ---- */
+.mast .eyebrow{color:var(--ink)}
+.mast{padding-top:44px;display:flex;flex-direction:column;gap:14px}
+.mast-row{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px}
+.mast h1{font-family:var(--display);font-size:clamp(40px,8.5vw,76px);line-height:.88;
+         letter-spacing:-.015em;font-weight:400;color:var(--ink)}
+.mast h1 .sun{color:var(--sun-deep)}
+.mast .sub{color:var(--ink);font-size:15px;margin-top:10px;max-width:44ch}
+.mast .meta{font-family:var(--mono);font-size:11px;color:var(--ink-2);line-height:1.9;text-align:right}
+
+/* ---- dawn hero ---- */
+.hero{border-radius:8px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:var(--surface)}
+.sky{position:relative;padding:26px 30px 22px;background:var(--surface);
+     border-bottom:1px solid var(--line-2)}
+.sky .eyebrow{color:var(--sun-text)}
+.sky .skyday{font-family:var(--body);font-weight:600;font-size:17px;color:var(--ink-2);margin-top:9px;letter-spacing:.01em;background:none}
+.sky .rating{font-family:var(--display);font-size:clamp(46px,10vw,86px);line-height:.92;
+             color:var(--sun-text);margin:8px 0 4px}
+.sky .forwho{color:var(--muted);font-family:var(--mono);font-size:10.5px;
+             letter-spacing:.16em;text-transform:uppercase}
+.hero-body{background:var(--surface-2);padding:24px 30px 28px;display:flex;flex-direction:column;gap:24px}
+.hero-cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:26px}
+@media(max-width:760px){.hero-cols{grid-template-columns:1fr}.sky{padding:22px}.hero-body{padding:22px}}
+.hero-body p{margin:0;color:var(--ink-2);font-size:15px;max-width:48ch}
+.window{margin-top:16px;padding:15px 17px;background:var(--sun-soft);border-radius:4px;
+        border-left:4px solid var(--sun)}
+.window .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--sun-text)}
+.window .val{font-family:var(--display);font-size:23px;margin-top:5px;line-height:1.15;color:var(--ink)}
+.window .why{font-size:13px;color:var(--ink-2);margin-top:6px}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-2);
+            border:1px solid var(--line-2);border-radius:4px;overflow:hidden;align-self:start}
+.stat{background:var(--surface-2);padding:16px 18px;display:flex;flex-direction:column;gap:2px}
+.stat .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:var(--display);font-size:24px;line-height:1.15;color:var(--ink)}
+.stat .n{font-size:12px;color:var(--muted);line-height:1.35}
+
+/* ---- daylight strip ---- */
+.strip{margin-top:20px}
+.strip .cap{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.strip .cap .t{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.strip svg{display:block;width:100%;height:auto;overflow:visible}
+
+/* ---- sections ---- */
+.sec{display:flex;flex-direction:column;gap:18px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.sec-head h2{color:var(--ink);font-family:var(--display);font-size:clamp(24px,3.6vw,33px);font-weight:400;letter-spacing:-.01em}
+.sec-head .hint{font-size:13px;color:var(--muted);max-width:46ch;text-align:right}
+@media(max-width:640px){.sec-head .hint{text-align:left}}
+
+/* ---- spot cards ---- */
+.spotgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:13px}
+.spot{background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px rgba(120,60,20,.05);padding:17px 18px;
+      display:flex;flex-direction:column;gap:11px;position:relative}
+.spot.pick{border-color:var(--sun);box-shadow:0 0 0 2px var(--sun-soft), var(--shadow)}
+.spot.pick::before{content:"Tomorrow's pick";position:absolute;top:-9px;left:14px;
+  background:var(--sun);color:var(--ink);font-family:var(--mono);font-size:9px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+.spot-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.spot-h .nm{font-weight:700;font-size:16px;line-height:1.22}
+.spot-h .dr{font-family:var(--mono);font-size:10.5px;color:var(--muted);white-space:nowrap;padding-top:3px}
+.spot .desc{font-size:12.5px;color:var(--muted);line-height:1.45}
+.skills{display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--line-2);margin-top:auto;padding-top:4px}
+.srow{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;padding-top:5px}
+.srow .sl{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.dots{display:flex;gap:3px}
+.dot{width:100%;height:7px;min-width:13px;border-radius:2px;background:var(--sunk)}
+.dot.on{background:var(--f2)}
+.q0 .dot.on{background:var(--f0)}.q1 .dot.on{background:var(--f1)}
+.q2 .dot.on{background:var(--f2)}.q3 .dot.on{background:var(--f3)}.q4 .dot.on{background:var(--f4)}
+.srow .sv{font-size:11.5px;white-space:nowrap;font-weight:600}
+.q0{color:var(--q0)}.q1{color:var(--q1)}.q2{color:var(--q2)}.q3{color:var(--q3)}.q4{color:var(--q4)}
+.badge{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+       padding:3px 8px;border-radius:2px;font-weight:700}
+.b-good{background:var(--good-bg);color:var(--good)}
+.b-warn{background:var(--warn-bg);color:var(--warn)}
+.b-crit{background:var(--crit-bg);color:var(--crit)}
+
+/* ---- zone tables ---- */
+.zone{display:flex;flex-direction:column;gap:10px}
+.zone-h{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.zone-h .zn{font-family:var(--display);font-size:17px;letter-spacing:-.005em}
+.zone-h .zd{font-size:12px;color:var(--muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:660px;font-size:13.5px}
+th{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+   text-align:left;padding:11px 14px;border-bottom:2px solid var(--line);font-weight:700;background:var(--surface-2)}
+td{padding:11px 14px;border-bottom:1px solid var(--line-2);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:12.5px}
+td .sn{font-weight:700}
+td .sd{font-size:12px;color:var(--muted);margin-top:2px;max-width:40ch;line-height:1.4}
+.mini{display:flex;gap:2.5px}
+.mini i{width:11px;height:11px;border-radius:2px;background:var(--sunk);display:block}
+.mini i.on{background:var(--f2)}
+.mini.q0 i.on{background:var(--f0)}.mini.q1 i.on{background:var(--f1)}
+.mini.q2 i.on{background:var(--f2)}.mini.q3 i.on{background:var(--f3)}.mini.q4 i.on{background:var(--f4)}
+
+/* ---- week ---- */
+.week{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:13px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px rgba(120,60,20,.05);padding:16px 17px;
+     display:flex;flex-direction:column;gap:10px}
+.day .dh{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.day .dd{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.day .dc{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.day .big{font-family:var(--display);font-size:27px;line-height:1.08}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:12.5px}
+.kv .k{color:var(--muted);font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding-top:3px}
+.kv .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px}
+.day .nt{font-size:12.5px;color:var(--ink-2);line-height:1.45;border-top:1px solid var(--line-2);padding-top:9px;margin-top:auto}
+
+/* ---- notices ---- */
+.notice{background:var(--surface);box-shadow:0 1px 2px rgba(120,60,20,.05);border:1px solid var(--line);border-left:4px solid var(--sea-text);
+        border-radius:4px;padding:17px 19px;font-size:14px;color:var(--ink-2);line-height:1.55}
+.notice.warm{border-left-color:var(--sun)}
+.notice.gold{border-left-color:var(--gold)}
+.notice strong{color:var(--ink);font-weight:700}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start}
+
+/* ---- learn ---- */
+.learn{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px rgba(120,60,20,.05);padding:22px 24px;
+      display:flex;flex-direction:column;gap:10px}
+.card .ttl{font-family:var(--display);font-size:30px;line-height:1.06;color:var(--sun-text)}
+.card.sea .ttl{color:var(--sea-text)}
+.card .body{font-size:14px;color:var(--ink-2);line-height:1.55}
+.card .use{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;
+           border-top:1px solid var(--line-2);padding-top:10px;margin-top:auto}
+
+footer{border-top:1px solid var(--line);padding-top:18px;font-size:12.5px;color:var(--muted);line-height:1.75}
+footer a{color:var(--sea-text)}
+:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){
+  .sky{background-size:100% 200%;background-position:0 100%;animation:rise 1.6s ease-out forwards}
+  @keyframes rise{to{background-position:0 0}}
+}
+
+/* ---- tabs ---- */
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:2px solid var(--line);padding-bottom:0;margin-bottom:4px}
+.tab{appearance:none;border:0;background:none;cursor:pointer;font-family:var(--mono);font-size:11px;
+     font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+     padding:12px 16px;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:4px 4px 0 0}
+.tab:hover{color:var(--ink);background:var(--surface-2)}
+.tab[aria-selected="true"]{color:var(--sun-deep);border-bottom-color:var(--sun)}
+.panel{display:flex;flex-direction:column;gap:38px}
+.panel[hidden]{display:none!important}
+
+/* ---- big number tiles ---- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;
+      display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 2px rgba(120,60,20,.05)}
+.tile .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:var(--display);font-size:31px;line-height:1.08;color:var(--ink)}
+.tile .v.sun{color:var(--sun-text)}
+.tile .n{font-size:12px;color:var(--muted);line-height:1.4}
+
+/* ---- the call ---- */
+.call{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+.call-top{padding:26px 30px 24px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between}
+.call .when{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sun-text)}
+.call .verdict{font-family:var(--display);font-size:clamp(40px,7vw,64px);line-height:.95;color:var(--sun-deep);margin-top:8px}
+.call .where{font-family:var(--display);font-size:clamp(21px,3vw,27px);line-height:1.15;margin-top:4px;color:var(--ink)}
+.call .sub{font-size:14px;color:var(--ink-2);margin-top:8px;max-width:44ch}
+.call .go{background:var(--sun);color:#FFF;border-radius:8px;padding:16px 22px;text-align:center;min-width:190px}
+.call .go .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#FFEEE4}
+.call .go .t{font-family:var(--display);font-size:26px;line-height:1.1;margin-top:4px;color:#FFF}
+
+/* ---- charts ---- */
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px 22px 16px;
+       box-shadow:0 1px 2px rgba(120,60,20,.05)}
+.chart-h{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.chart-h .t{font-family:var(--display);font-size:19px}
+.chart-h .s{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+
+/* ---- best-for pills ---- */
+.bestfor{display:flex;gap:5px;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      padding:4px 9px;border-radius:99px;border:1.5px solid var(--line);color:var(--muted);background:var(--surface)}
+.pill.on{background:var(--sea-soft);border-color:var(--sea);color:var(--sea-text)}
+.pill.on.you{background:var(--sun-soft);border-color:var(--sun);color:var(--sun-text)}
+
+/* ---- spot rows ---- */
+.rows{display:flex;flex-direction:column;gap:9px}
+.row{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:15px 18px;
+     display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:16px;align-items:center;
+     box-shadow:0 1px 2px rgba(120,60,20,.05)}
+@media(max-width:640px){.row{grid-template-columns:1fr;gap:11px}}
+.row.pick{border-color:var(--sun);box-shadow:0 0 0 2px var(--sun-soft)}
+.row .nm{font-weight:700;font-size:15.5px;line-height:1.25}
+.row .meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px}
+.row .ht{font-family:var(--display);font-size:23px;color:var(--ink);white-space:nowrap;text-align:right}
+.row .ht small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+               text-transform:uppercase;color:var(--muted);font-weight:400}
+
+/* ---- roomier rhythm ---- */
+.wrap{gap:52px}
+.sec{gap:22px}
+.lede{font-size:16px;color:var(--ink-2);max-width:60ch;line-height:1.6}
+.tidelist{display:flex;gap:10px;flex-wrap:wrap}
+.tideitem{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:13px 17px;
+          display:flex;flex-direction:column;gap:1px;min-width:112px;box-shadow:0 1px 2px rgba(120,60,20,.05)}
+.tideitem .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase}
+.tideitem.hi .k{color:var(--sea-text)}
+.tideitem.lo .k{color:var(--sun-text)}
+.tideitem .v{font-family:var(--display);font-size:21px;line-height:1.1;color:var(--ink)}
+
+
+/* ---- wave height glyph + body-scale rows ---- */
+.row{grid-template-columns:auto minmax(0,1fr) auto auto;gap:18px}
+@media(max-width:720px){.row{grid-template-columns:auto minmax(0,1fr);gap:12px}
+  .row .rate,.row .ht{grid-column:1/-1}}
+.glyph{width:46px;height:62px;flex:none;display:block}
+.row .rate{text-align:right;min-width:132px}
+.row .rate .w{font-family:var(--display);font-size:17px;line-height:1.15;display:block}
+.row .rate .d{display:flex;gap:3px;justify-content:flex-end;margin-top:6px}
+.row .rate .d i{width:15px;height:6px;border-radius:2px;background:var(--sunk);display:block}
+.row .ht{text-align:right;min-width:104px}
+.row .ht .big{font-family:var(--display);font-size:20px;color:var(--ink);display:block;line-height:1.1}
+.row .ht small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;
+               text-transform:uppercase;color:var(--muted);margin-top:3px}
+.alsofor{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+         color:var(--muted);margin-top:5px}
+.alsofor b{color:var(--sea-text);font-weight:700}
+
+/* ---- size legend ---- */
+.sizekey{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px}
+.sizecell{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 10px 10px;
+          text-align:center;box-shadow:0 1px 2px rgba(120,60,20,.05)}
+.sizecell .lab{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+               color:var(--ink-2);margin-top:6px;font-weight:700}
+.sizecell .ft{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:2px}
+.sizecell.now{border-color:var(--sun);background:var(--sun-soft)}
+
+.chart .src{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:10px;line-height:1.6}
+.callout{background:var(--sea-soft);border:1px solid var(--sea);border-radius:8px;padding:13px 16px;
+         font-size:13.5px;color:var(--ink-2);margin-top:12px}
+.callout b{color:var(--ink)}
+
+
+/* ---- controls ---- */
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;background:var(--surface);
+  border:1px solid var(--line);border-radius:10px;padding:16px 18px;box-shadow:0 1px 2px rgba(120,60,20,.05)}
+.ctl{display:flex;flex-direction:column;gap:5px;min-width:172px;flex:1 1 172px}
+.ctl label{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.ctl select{appearance:none;font-family:var(--body);font-size:15px;font-weight:600;color:var(--ink);
+  background:var(--surface-2);border:1.5px solid var(--line);border-radius:7px;padding:10px 34px 10px 12px;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--sun-text) 50%),linear-gradient(135deg,var(--sun-text) 50%,transparent 50%);
+  background-position:calc(100% - 17px) 20px,calc(100% - 12px) 20px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.ctl select:hover{border-color:var(--sun)}
+.ctl .note{font-size:11.5px;color:var(--muted)}
+
+.row .nm a{color:var(--ink);text-decoration:none;transition:color .12s ease}
+.row .nm a:hover,.row .nm a:focus-visible{color:var(--sun-text)}
+.tideitem .ft{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:2px}
+.gloss{display:flex;flex-direction:column;gap:10px}
+.gterm{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:15px 18px;
+       box-shadow:0 1px 2px rgba(120,60,20,.05)}
+.gterm .g{font-family:var(--display);font-size:17px;color:var(--sun-text)}
+.gterm .b{font-size:13.5px;color:var(--ink-2);margin-top:4px;line-height:1.55}
+.gterm .have{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+             margin-top:8px;color:var(--sea-text)}
+.gterm .have.no{color:var(--muted)}
+.row .ht .big{font-size:26px}
+.row .ht .desc{display:block;font-family:var(--body);font-size:12.5px;font-weight:600;color:var(--ink-2);margin-top:2px}
+.sizecell .ft{font-family:var(--display);font-size:17px;color:var(--ink);margin-top:6px}
+.sizecell .lab{font-family:var(--body);font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;
+  color:var(--ink-2);margin-top:1px}
+.refnote{font-size:13px;color:var(--muted);margin-top:2px}
+
+
+.call .go .t2{font-family:var(--mono);font-size:12px;color:#FFEEE4;margin-top:5px;font-weight:700}
+.call .where a{color:var(--ink);text-decoration:none;transition:color .12s ease}
+.call .where a:hover,.call .where a:focus-visible{color:var(--sun-text)}
+
+.winline{font-family:var(--mono);font-size:11px;color:var(--ink-2);margin-top:4px}
+.winline b{color:var(--sun-text)}
+.chart-h .t b{color:var(--sun-text)}
+
+.row .meta a.cam{color:var(--sea-text);text-decoration:none;font-weight:700;transition:color .12s ease}
+.row .meta a.cam:hover,.row .meta a.cam:focus-visible{color:var(--sun-text)}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <div id="srcbanner" hidden></div>
+
+  <header class="mast">
+    <div class="mast-row">
+      <div>
+        <div class="eyebrow" id="mast-eyebrow">Nightly surf call</div>
+        <h1>OBX<br><span class="sun">Dawn Patrol</span></h1>
+      </div>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="spiral"></div>
+  </header>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="base">Your home base</label>
+      <select id="base"></select>
+      <span class="note">Shows every break within a 30-minute drive.</span>
+    </div>
+    <div class="ctl">
+      <label for="skill">Your level</label>
+      <select id="skill">
+        <option value="0">Beginner</option>
+        <option value="1">Intermediate</option>
+        <option value="2">Advanced</option>
+      </select>
+      <span class="note">Changes every rating and the order of the list.</span>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div id="daypanels"></div>
+
+  <!-- ==================== WEEK ==================== -->
+  <section class="panel" id="p-week" role="tabpanel" hidden>
+    <div class="chart">
+      <div class="chart-h"><span class="t">Wave height, next seven days</span><span class="s" id="weekzone"></span></div>
+      <svg id="weekchart" viewBox="0 0 760 200" role="img" aria-labelledby="week-alt"></svg>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h2>Day by day</h2></div>
+      <div class="week" id="week"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h2>Further out</h2><span class="hint" id="outlook-range"></span></div>
+      <div class="cols2">
+        <div class="notice" id="outlook"></div>
+        <div class="tablewrap"><table style="min-width:0">
+          <thead><tr><th>Date</th><th>Tides</th></tr></thead>
+          <tbody id="tides"></tbody>
+        </table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SPOTS ==================== -->
+  <section class="panel" id="p-spots" role="tabpanel" hidden>
+    <p class="lede">Every break from Corolla down to Ocracoke, in geographic order, scored for
+    <b id="spots-day"></b>. The <b>Where to go</b> list on the day tabs is the short version — only what is inside
+    a 30-minute drive, ranked best first. This is the full map: the whole coastline in order, including the breaks
+    worth a longer drive when a swell actually shows up.</p>
+    <div id="zones" style="display:flex;flex-direction:column;gap:34px"></div>
+    <div class="notice"><strong>About the cameras.</strong> The Live cam links open third-party feeds run by
+    SurfChex and the Outer Banks visitors bureau — free, no login. They are not embedded here because this page
+    is sandboxed against loading outside video, and they go dark in storms, at night and out of season, so a
+    cam that will not load is usually the camera rather than the link. Nine of the twenty-two breaks have one.</div>
+    <div class="notice gold"><strong>The Cove is the exception.</strong> Nearly every break here faces east, so one wind
+    does the same thing to all of them. The Cove at Buxton, Frisco and Hatteras Village face south instead &mdash; when a
+    northeast wind wrecks the island, those three stay clean.</div>
+  </section>
+
+  <!-- ==================== LEARN ==================== -->
+  <section class="panel" id="p-learn" role="tabpanel" hidden>
+    <div class="learn">
+      <div class="card">
+        <div class="eyebrow">Today's term</div>
+        <div class="ttl" id="term-title">&nbsp;</div>
+        <div class="body" id="term-body"></div>
+        <div class="use" id="term-idx"></div>
+      </div>
+      <div class="card sea">
+        <div class="eyebrow">Rule of the lineup</div>
+        <div class="ttl" id="rule-title">&nbsp;</div>
+        <div class="body" id="rule-body"></div>
+        <div class="use" id="rule-idx"></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h2>What the pro sites show</h2>
+        <span class="hint">Everything Surfline and surf-forecast put on screen, in plain words &mdash; and whether this page has it.</span></div>
+      <div class="gloss" id="gloss"></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><h2>What the ratings mean</h2>
+        <span class="hint">Every spot is judged separately for each level &mdash; the same wave can be great for you and useless to someone else.</span></div>
+      <div class="rows" id="key"></div>
+    </div>
+  </section>
+
+  <footer>
+    Surf height and rip risk from the National Weather Service surf zone forecasts
+    (<a href="https://tgftp.nws.noaa.gov/data/raw/fz/fzus52.kmhx.srf.mhx.txt">Newport</a>,
+    <a href="https://tgftp.nws.noaa.gov/data/raw/fz/fzus51.kakq.srf.akq.txt">Wakefield</a>).
+    Wind from the <a href="https://tgftp.nws.noaa.gov/data/raw/fz/fzus52.kmhx.cwf.mhx.txt">coastal waters forecast</a>.
+    Tides from <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8652587">NOAA Oregon Inlet Marina</a>,
+    water from <a href="https://www.ndbc.noaa.gov/station_page.php?station=44100">buoy 44100</a>,
+    swell outlook from the <a href="https://www.nhc.noaa.gov/text/MIATWOAT.shtml">National Hurricane Center</a>.
+    Never surf alone while you are learning. <span id="srcnote"></span>
+  </footer>
+</div>
+
+<script>
+const SPOTS = [{"zone": "currituck", "name": "Corolla / Lighthouse", "note": "Wide-open beach break, long sandbars, thins out fast north of the village.", "facing": 70, "drive": 50, "exp": 1.0, "type": "beach", "rel": 0.88, "pos": 0, "maps": "Currituck Beach Lighthouse, Corolla, NC", "ferry": false, "cam": null}, {"zone": "currituck", "name": "Duck Research Pier", "note": "Pier pilings build a bar on both sides. Best on a clean E swell.", "facing": 70, "drive": 40, "exp": 1.0, "type": "pier", "rel": 0.95, "pos": 12, "maps": "Duck FRF Research Pier, Duck, NC", "ferry": false, "cam": null}, {"zone": "currituck", "name": "Duck Beach", "note": "Consistent bars, mellow shoulder on a small day.", "facing": 70, "drive": 38, "exp": 0.95, "type": "beach", "rel": 0.9, "pos": 13, "maps": "Duck Town Park Beach Access, Duck, NC", "ferry": false, "cam": null}, {"zone": "currituck", "name": "Southern Shores", "note": "Quiet, forgiving, rarely crowded.", "facing": 70, "drive": 32, "exp": 0.95, "type": "beach", "rel": 0.88, "pos": 18, "maps": "Southern Shores Beach Access, Southern Shores, NC", "ferry": false, "cam": null}, {"zone": "nobx", "name": "Kitty Hawk Pier", "note": "North-side bar is the pick. Handles a little more size than it looks.", "facing": 75, "drive": 28, "exp": 1.0, "type": "pier", "rel": 0.95, "pos": 21, "maps": "Kitty Hawk Fishing Pier, Kitty Hawk, NC", "ferry": false, "cam": "https://surfchex.com/cams/kitty-hawk-nc/"}, {"zone": "nobx", "name": "Avalon Pier", "note": "Classic KDH pier peak, gets crowded when it's on.", "facing": 75, "drive": 25, "exp": 1.0, "type": "pier", "rel": 0.96, "pos": 23, "maps": "Avalon Fishing Pier, Kill Devil Hills, NC", "ferry": false, "cam": null}, {"zone": "nobx", "name": "First Street, KDH", "note": "Sandbar peaks, easy paddle-out on small days.", "facing": 75, "drive": 22, "exp": 0.95, "type": "beach", "rel": 0.9, "pos": 24, "maps": "First Street Beach Access, Kill Devil Hills, NC", "ferry": false, "cam": null}, {"zone": "nobx", "name": "S-Curves", "note": "Shifting bars where the road bends. Punchy for its size.", "facing": 75, "drive": 22, "exp": 1.0, "type": "beach", "rel": 0.95, "pos": 26, "maps": "Beach Access Milepost 9, Kill Devil Hills, NC", "ferry": false, "cam": null}, {"zone": "nobx", "name": "Nags Head Pier", "note": "Reliable pier bar, works through most of the tide.", "facing": 75, "drive": 18, "exp": 1.0, "type": "pier", "rel": 0.97, "pos": 29, "maps": "Nags Head Fishing Pier, Nags Head, NC", "ferry": false, "cam": "https://surfchex.com/cams/nags-head-web-cam-abalone-st/"}, {"zone": "nobx", "name": "Jennette's Pier", "note": "Well-formed peaks either side of the pier and the sand stays put, so it works more often than most.", "facing": 75, "drive": 16, "exp": 1.0, "type": "pier", "rel": 1.0, "pos": 32, "maps": "Jennette's Pier, Nags Head, NC", "ferry": false, "cam": "https://surfchex.com/cams/nags-head-web-cam/"}, {"zone": "nobx", "name": "Outer Banks Pier", "note": "South Nags Head. Softer, slower waves - forgiving on a learning day.", "facing": 75, "drive": 18, "exp": 0.95, "type": "pier", "rel": 0.93, "pos": 34, "maps": "Outer Banks Fishing Pier, Nags Head, NC", "ferry": false, "cam": null}, {"zone": "nobx", "name": "Coquina Beach", "note": "No pier, no crowd. Bars move around but it's an easy wave.", "facing": 75, "drive": 22, "exp": 0.95, "type": "beach", "rel": 0.88, "pos": 38, "maps": "Coquina Beach, Nags Head, NC", "ferry": false, "cam": null}, {"zone": "nobx", "name": "Oregon Inlet / The Jetty", "note": "Jetty sandbar. Current runs hard on a moving tide - not a beginner spot.", "facing": 80, "drive": 28, "exp": 1.05, "type": "jetty", "rel": 0.85, "pos": 41, "maps": "Oregon Inlet Fishing Center, Nags Head, NC", "ferry": false, "cam": null}, {"zone": "hatteras", "name": "Pea Island / Ramp 34", "note": "Empty beach, pure sandbar luck. Bring everything you need.", "facing": 80, "drive": 40, "exp": 1.0, "type": "beach", "rel": 0.85, "pos": 46, "maps": "Pea Island National Wildlife Refuge, Rodanthe, NC", "ferry": false, "cam": null}, {"zone": "hatteras", "name": "Rodanthe Pier / S-Turns", "note": "The Hatteras standout. Steeper, faster, real consequence when it's big.", "facing": 80, "drive": 48, "exp": 1.1, "type": "pier", "rel": 0.98, "pos": 53, "maps": "Rodanthe Pier, Rodanthe, NC", "ferry": false, "cam": "https://surfchex.com/cams/rodanthe-north/"}, {"zone": "hatteras", "name": "Salvo", "note": "Long stretch of peaks, spreads a crowd out.", "facing": 80, "drive": 55, "exp": 1.0, "type": "beach", "rel": 0.88, "pos": 58, "maps": "Salvo Day Use Area, Salvo, NC", "ferry": false, "cam": "https://surfchex.com/cams/waves-nc-oceanside/"}, {"zone": "hatteras", "name": "Avon Pier", "note": "Deep water close in. Holds size better than anywhere north.", "facing": 85, "drive": 70, "exp": 1.1, "type": "pier", "rel": 0.96, "pos": 70, "maps": "Avon Fishing Pier, Avon, NC", "ferry": false, "cam": "https://surfchex.com/cams/avon/"}, {"zone": "hatteras", "name": "Buxton / The Lighthouse", "note": "North side of the Cape. The wave everyone drives for on a proper swell.", "facing": 85, "drive": 82, "exp": 1.15, "type": "beach", "rel": 0.97, "pos": 81, "maps": "Cape Hatteras Lighthouse, Buxton, NC", "ferry": false, "cam": "https://www.outerbanks.org/webcams/"}, {"zone": "hatteras", "name": "The Cove, Buxton", "note": "Faces SOUTH behind the Cape - clean when a NE wind ruins everywhere else.", "facing": 180, "drive": 85, "exp": 0.7, "type": "beach", "rel": 0.92, "pos": 82, "maps": "Old Lighthouse Beach, Buxton, NC", "ferry": false, "cam": null}, {"zone": "hatteras", "name": "Frisco", "note": "South-facing, sheltered, gentle. The small-day fallback.", "facing": 165, "drive": 92, "exp": 0.65, "type": "beach", "rel": 0.85, "pos": 86, "maps": "Frisco Beach Access, Frisco, NC", "ferry": false, "cam": null}, {"zone": "hatteras", "name": "Hatteras Village / Ramp 55", "note": "End of the road. Quiet, south-facing, forgiving.", "facing": 170, "drive": 100, "exp": 0.6, "type": "beach", "rel": 0.82, "pos": 91, "maps": "Ramp 55 Beach Access, Hatteras, NC", "ferry": false, "cam": "https://surfchex.com/cams/hatteras-web-cam/"}, {"zone": "ocracoke", "name": "Ocracoke Lifeguard Beach", "note": "Ferry ride away. Uncrowded by definition, worth it on the right swell.", "facing": 95, "drive": 160, "exp": 1.0, "type": "beach", "rel": 0.88, "pos": 105, "maps": "Ocracoke Lifeguard Beach, Ocracoke, NC", "ferry": true, "cam": "https://surfchex.com/cams/ocracoke-nc-live-web-cam-surfchex/"}];
+const ZONES = [{"key": "currituck", "name": "Currituck Banks", "desc": "Corolla down to Southern Shores - NWS Wakefield zone"}, {"key": "nobx", "name": "Northern Outer Banks", "desc": "Kitty Hawk to Oregon Inlet - NWS Newport zone"}, {"key": "hatteras", "name": "Hatteras Island", "desc": "Pea Island to Hatteras Village - NWS Newport zone"}, {"key": "ocracoke", "name": "Ocracoke Island", "desc": "Ferry access only - NWS Newport zone"}];
+const TERMS = [["Dawn patrol", "The first session of the day, out before the wind gets up. On the Outer Banks in summer that is most of the good surfing there is."], ["Offshore", "Wind blowing from the land out to sea. It holds the wave face up and grooms it smooth. On an east-facing OBX beach, that means a west or southwest wind."], ["Onshore", "Wind blowing off the ocean onto the beach. It crumbles waves before they can stand up. Northeast and east wind does this here."], ["Glassy", "No wind at all. The water surface looks like poured glass. Usually the first hour after sunrise."], ["Set", "A group of bigger waves arriving together after a quiet spell. Swell travels in packs, not evenly."], ["Lull", "The flat gap between sets. This is when you paddle out, not when you panic."], ["Peak", "The highest part of a wave, where it starts breaking. Sitting on the peak is how you get the wave; sitting off it is how you watch."], ["A-frame", "A peak that breaks in both directions at once, shaped like a tent. Two surfers can share it, one going each way."], ["Shoulder", "The unbroken part of the face next to the whitewater. That is the part you actually ride."], ["Closeout", "A wave that breaks all at once along its whole length. Nowhere to go. Common on a windswell."], ["Pearling", "Burying the nose on takeoff and going over the front. Everybody does it, forever."], ["Pop-up", "Going from lying down to standing in one motion. The single move worth practicing on land."], ["Duck dive", "Pushing the board down and under an oncoming wave so it passes over you. Hard on a big board."], ["Turtle roll", "Flipping the board upside down and hanging on underneath as the wave passes. What you do instead of a duck dive on a longboard."], ["Impact zone", "Where the waves are landing hardest. Do not sit there, do not rest there."], ["Rip current", "A channel of water running back out to sea. If you are caught in one, do not fight it - paddle or swim parallel to the beach until you are out of it."], ["Sandbar", "The underwater ridge of sand that makes a wave break. On the Outer Banks they rearrange after every storm, which is why a spot can be perfect one month and useless the next."], ["Beach break", "Waves breaking over sand rather than reef or rock. That is the entire Outer Banks - forgiving to fall on, but inconsistent."], ["Groundswell", "Long-period swell generated by a distant storm. Cleaner, more organized, more powerful. What a hurricane sends up the coast."], ["Windswell", "Short-period swell made by nearby wind. Choppy, weak, closes out. Most ordinary summer days here."], ["Period", "Seconds between passing waves. Under 8 seconds is windswell mush. Ten or more and it starts to feel like real surf."], ["Regular and goofy", "Left foot forward is regular; right foot forward is goofy. Neither is better and you do not get to choose."], ["Party wave", "More than one person riding the same wave on purpose. Fine with friends, rude with strangers."], ["Kook", "Someone behaving unsafely or obliviously in the water. It describes behavior, not ability - a beginner who follows the rules is not a kook."], ["Grom", "A young surfer. Usually better than you and entirely aware of it."], ["Lineup", "Where surfers sit waiting for waves. It has an order even when it does not look like one."], ["Bottom turn", "The first turn after you drop in, at the base of the wave. Everything else you do comes out of it."], ["Cutback", "Turning back toward the breaking part of the wave when you have outrun it."], ["Green wave", "An unbroken, still-standing wave face - as opposed to the whitewater you learn on. Your first green wave is the real milestone."], ["Mushy", "Soft, slow, gutless waves. Experienced surfers complain about them. They are the best thing that can happen to you right now."], ["Shorebreak", "Waves breaking directly onto the sand in shallow water. Looks fun, hurts."], ["Backwash", "Water draining back off a steep beach into incoming waves, making them lumpy and unpredictable."], ["Barrel", "When the lip throws over far enough that you can ride inside the hollow part. The whole point, eventually."], ["Snaking", "Paddling around someone to get inside them and claim priority. Considered worse than dropping in."]];
+const RULES = [["The peak decides", "The surfer closest to the breaking peak has right of way. Everyone else pulls back. This is the rule the other rules hang off."], ["Never drop in", "Taking off on a wave in front of someone already riding it is the cardinal sin. Look both ways before you commit."], ["Do not snake", "Paddling around someone to get inside them and steal priority is worse than dropping in, because it is deliberate."], ["Paddle around, not through", "Get to the lineup via the channel or the shoulder. Paddling straight through the middle of the peak puts you in everyone's way."], ["Go behind, not in front", "If you are paddling out and someone is riding toward you, paddle behind them into the whitewater. Never toward the open face they need."], ["Hold onto your board", "A loose board is the most dangerous thing in the water. There is always someone behind you."], ["Call your direction", "On a peak that breaks both ways, say \"left\" or \"right\" out loud before you stand up. Two words prevent most collisions."], ["Wait your turn", "The lineup has an order. Sit, watch it for a few minutes, and take your place in it rather than paddling straight to the peak."], ["Apologize when you burn someone", "You will. Say so immediately. It costs nothing and resets the whole session."], ["You are a guest", "Respect the people who surf a break every day. Especially true at Hatteras spots, where the locals have earned it."], ["Helping outranks everything", "If someone is in trouble, every other rule stops applying. Go."], ["Learn on the inside", "Stay away from the main peak until you can consistently catch a wave and stand up. The whitewater on the inside is where that happens, and nobody minds you there."]];
+let SEED = null;
+const LABELS = ["Too small","Marginal","Rideable","Good","Excellent"];
+const GLOSS=[
+ ["Swell period","Seconds between passing waves, and the number experienced surfers read before anything else. Long periods mean the swell was made by a distant storm and has had time to organise, so it carries power and breaks in shape. Short periods mean local wind made it an hour ago: weak, crumbly, closing out. Two feet at twelve seconds and two feet at five seconds are completely different days.",true,"measured live on the In the water right now panel."],
+ ["Swell direction","The compass direction the swell is travelling out of. It decides which beaches light up, because a swell has to be able to reach the sand without the coastline shadowing it. On these banks an east or northeast swell hits everything; a due south swell mostly misses the north end.",true,"measured live, shown beside the period."],
+ ["Primary and secondary swell","Big forecasts split the water into separate swell trains — an old groundswell from one storm plus fresh windswell from another — each with its own height, period and direction. When two trains meet, the sets get bigger and less predictable.",false,"the free National Weather Service products give one combined surf height, not a split."],
+ ["Wave energy","Usually printed in kilojoules. It is roughly height squared times period, and it is the honest answer to how a wave will actually feel — a long-period four-foot wave carries far more punch than a short-period four-foot wave. surf-forecast leads with it for that reason.",false,"it needs forecast period, which the free products do not carry. The live period reading is the closest thing here."],
+ ["Significant wave height vs face height","Buoys report significant wave height: the average of the largest third of waves, measured in open water. Surf reports quote face height at the beach, which is usually smaller and shaped by the sandbar. That is why the buoy can say 2.6 feet while the beach forecast says 1.5 to 2.5.",true,"both are shown, and labelled so you can tell which is which."],
+ ["Wind gusts and wind state","Average wind understates a gusty day. The pro sites add a gust figure and a word — glassy, cross-offshore, onshore — describing what the wind is doing to the wave face.",true,"the wind state is worked out for each beach from its own angle, and it drives the hourly curve. Gusts are not in the free marine forecast."],
+ ["Tide height in feet","Not just when the tide turns, but how far it moves. A big swing shifts the sandbar break more than a small one.",true,"heights sit beside every tide time and on the curve."],
+ ["Rating out of ten","Surfline scores a break from Poor to Epic. It bundles size, wind, tide and swell quality into one number.",true,"the same idea, rated for your level rather than an average surfer, because a great day for an expert can be unsurfable for a beginner."],
+ ["Water temperature and wetsuit","What you can stand to wear. Every degree matters once autumn arrives on this coast.",true,"measured live, with the suit you would want."],
+];
+const RIPV = {Low:0.0, Moderate:0.45, High:1.0};
+const BASES = [{"name": "Corolla", "pos": 0, "over": 3}, {"name": "Duck", "pos": 12, "over": 3}, {"name": "Southern Shores", "pos": 18, "over": 3}, {"name": "Kitty Hawk", "pos": 21, "over": 3}, {"name": "Kill Devil Hills", "pos": 25, "over": 3}, {"name": "Nags Head", "pos": 31, "over": 3}, {"name": "Manteo", "pos": 33, "over": 12}, {"name": "Wanchese", "pos": 36, "over": 16}, {"name": "Rodanthe", "pos": 53, "over": 3}, {"name": "Salvo", "pos": 58, "over": 3}, {"name": "Avon", "pos": 70, "over": 3}, {"name": "Buxton", "pos": 81, "over": 3}, {"name": "Frisco", "pos": 86, "over": 3}, {"name": "Hatteras Village", "pos": 91, "over": 3}, {"name": "Ocracoke", "pos": 105, "over": 3, "ferry": true}];
+const NEAR_MIN = 30, SVGNS = "http://www.w3.org/2000/svg";
+const SKILLS = ["Beginner","Intermediate","Advanced"];
+let BASE = "Manteo", SKILL = 0;
+function load(k,d){try{const v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
+function save(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function baseObj(){return BASES.find(b=>b.name===BASE)||BASES.find(b=>b.name==="Manteo");}
+function driveMins(sp){
+  const b=baseObj();
+  if(b.name==="Manteo") return sp.drive;            // measured, not modelled
+  let m=b.over+Math.abs(sp.pos-b.pos)/40*60;
+  if(!!b.ferry!==!!sp.ferry) m+=60;
+  return m<40 ? Math.round(m) : Math.round(m/5)*5;
+}
+function driveLabel(sp){const m=driveMins(sp);
+  const s=m<90? m+" min" : Math.floor(m/60)+"h "+String(m%60).padStart(2,"0");
+  return (baseObj().name==="Manteo"?"":"~")+s;}
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const el = (n,a) => { const e=document.createElementNS(SVGNS,n); for(const k in a) e.setAttribute(k,a[k]); return e; };
+
+function compass(d){const p=["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+  return p[Math.round((((d%360)+360)%360)/22.5)%16];}
+function windFactor(f,w){const off=(f+180)%360;const d=Math.abs(((w-off+180)%360+360)%360-180);return Math.cos(d*Math.PI/180);}
+function cleanliness(f,w,k){const wf=windFactor(f,w);let b=k<=5?0.90:0.55+0.42*wf;
+  if(wf>0.5&&k>=14)b-=0.12*((k-13)/6); if(wf<-0.3)b-=0.10*Math.max(0,k-8)/8; return Math.max(0.05,Math.min(1,b));}
+function scoresFor(sp,day){
+  const [lo,hi]=day.surf[sp.zone]; const size=((lo+hi)/2)*sp.exp;
+  const clean=Math.max(cleanliness(sp.facing,day.am[0],day.am[1]),cleanliness(sp.facing,day.pm[0],day.pm[1])*0.92);
+  const rip=RIPV[day.rip[sp.zone]] ?? 0.45;
+  let beg=Math.exp(-Math.pow(size-2.0,2)/1.6)*(0.45+0.55*clean)*(1-0.40*rip);
+  if(sp.type==="jetty")beg*=0.35; if(size>4.0)beg*=0.35;
+  const inter=Math.exp(-Math.pow(size-3.4,2)/3.2)*(0.40+0.60*clean)*(1-0.15*rip);
+  const adv=(1/(1+Math.exp(-(size-4.3)*1.5)))*(0.35+0.65*clean);
+  const cond=0.55*clean+0.45*Math.min(1,size/4.5);
+  const q=0.80+0.20*sp.rel;
+  return [beg,inter,adv,cond].map(x=>Math.max(0,Math.min(1,x*q)));
+}
+const stars = v => Math.round(v*4);
+function level(v,conf){let n=stars(v); if(conf==="low"&&n>3)n=3; return n;}
+function verdict(v,conf){return LABELS[level(v,conf)];}
+const drivefmt = m => m<90 ? m+" min" : Math.floor(m/60)+"h "+String(m%60).padStart(2,"0");
+const half = x => (Math.round(x*2)/2);
+function spotHeight(sp,day){const [lo,hi]=day.surf[sp.zone];
+  const a=half(lo*sp.exp), b=half(hi*sp.exp); return a===b ? a+" ft" : a+"–"+b+" ft";}
+function toMin(t){const [h,m]=t.split(":").map(Number);return h*60+m;}
+function fmtClock(m){let h=Math.floor(m/60)%24,mm=Math.round(m%60);const ap=h>=12?"pm":"am";
+  let hh=h%12; if(hh===0)hh=12; return hh+":"+String(mm).padStart(2,"0")+ap;}
+function windowEndMin(day){const k=day.pm[1];return k>=12?570:(k>=9?630:690);}
+function windowText(day){return fmtClock(toMin(day.sr)).replace("am","")+"–"+fmtClock(windowEndMin(day));}
+
+const BODY=[[1,"Ankle high",0.13],[1.75,"Knee high",0.28],[2.5,"Waist high",0.50],
+            [3.5,"Chest high",0.68],[4.5,"Shoulder high",0.82],[6,"Head high",1.0],
+            [8,"Overhead",1.22],[99,"Double overhead",1.55]];
+function body(ft){for(const b of BODY) if(ft<=b[0]) return {label:b[1],frac:b[2]};return {label:"Huge",frac:1.7};}
+function meanHeight(sp,day){const [lo,hi]=day.surf[sp.zone];return ((lo+hi)/2)*sp.exp;}
+
+/* a person, with the water at the height the wave actually breaks */
+function waveGlyph(ft,cls){
+  const b=body(ft), W=46,H=62, ground=H-4, headR=4.6, top=8;
+  const level=ground-Math.min(1.0,b.frac)*(ground-top);
+  return '<svg class="glyph '+(cls||"")+'" viewBox="0 0 '+W+' '+H+'" aria-hidden="true">'+
+    '<rect x="0" y="'+level.toFixed(1)+'" width="'+W+'" height="'+(ground-level+4).toFixed(1)+
+      '" fill="var(--sea)" fill-opacity="0.24"/>'+
+    '<path d="M0 '+level.toFixed(1)+' q 7 -4 12 0 t 12 0 t 12 0 t 12 0" fill="none" stroke="var(--sea)" stroke-width="2"/>'+
+    '<circle cx="23" cy="'+(top+headR)+'" r="'+headR+'" fill="none" stroke="var(--ink)" stroke-width="1.7"/>'+
+    '<path d="M23 '+(top+headR*2)+' L23 '+(ground-13)+' M23 '+(top+headR*2+4)+' L15 '+(top+headR*2+15)+
+      ' M23 '+(top+headR*2+4)+' L31 '+(top+headR*2+15)+
+      ' M23 '+(ground-13)+' L17 '+ground+' M23 '+(ground-13)+' L29 '+ground+
+      '" fill="none" stroke="var(--ink)" stroke-width="1.7" stroke-linecap="round"/>'+
+    '</svg>';
+}
+
+const near = () => SPOTS.filter(s=>driveMins(s)<=NEAR_MIN);
+function ranked(day,list){return (list||near()).slice().sort((a,b)=>{
+  const d=scoresFor(b,day)[SKILL].toFixed(3)-scoresFor(a,day)[SKILL].toFixed(3);
+  return d!==0?d:driveMins(a)-driveMins(b);});}
+
+function alsoFor(sp,day){
+  const s=scoresFor(sp,day), names=["beginners","intermediates","advanced surfers"];
+  const others=[0,1,2].filter(i=>i!==SKILL && level(s[i],day.conf)>=2).map(i=>names[i]);
+  if(!others.length) return '<div class="alsofor">Not worth it for any other level today</div>';
+  return '<div class="alsofor">Also worth it for <b>'+others.join(" and ")+'</b></div>';
+}
+
+/* ---------------- hour-by-hour conditions ----------------
+   Wave height is a once-a-day zone forecast, so it does not move much hour to
+   hour. What moves is the wind and the tide, and those decide whether the wave
+   is worth paddling for. This models both across the day. ------------------ */
+function lerpAngle(a,b,f){let d=((b-a+540)%360)-180;return (a+d*f+360)%360;}
+function windAt(day,m){
+  const sr=toMin(day.sr), ss=toMin(day.ss);
+  const t0=sr+60, t1=900;                       // am sample, then mid-afternoon
+  const f=Math.max(0,Math.min(1,(m-t0)/(t1-t0)));
+  const dir=lerpAngle(day.am[0],day.pm[0],f);
+  let spd=day.am[1]+(day.pm[1]-day.am[1])*f;
+  if(m>ss-150) spd*=0.55+0.45*Math.max(0,(ss-m)/150);   // the evening drop-off
+  return [dir,Math.max(1,spd)];
+}
+function tideFactor(exts,m){
+  const v=tideAt(exts,m), dv=tideAt(exts,m+20)-tideAt(exts,m-20);
+  const mid=1-Math.abs(v-0.5)*2;
+  return 0.70+0.22*mid+0.08*(dv>0?1:0);
+}
+function sizeFactorFor(size,skill){
+  if(skill===0) return Math.exp(-Math.pow(size-2.0,2)/1.6)*(size>4?0.35:1);
+  if(skill===1) return Math.exp(-Math.pow(size-3.4,2)/3.2);
+  return 1/(1+Math.exp(-(size-4.3)*1.5));
+}
+/* Open-Meteo gives wave height, period and wind for every hour. Use them
+   when present; fall back to the modelled day-average when they are missing. */
+function hourlyAt(zone,date,m,field){
+  const H=SEED&&SEED.hourly&&SEED.hourly[zone];
+  if(!H||!H.time) return null;
+  const hh=String(Math.floor(m/60)).padStart(2,"0");
+  const key=date+"T"+hh+":00";
+  const i=H.time.indexOf(key);
+  return i<0?null:(H[field]?H[field][i]:null);
+}
+function sizeAt(sp,day,m){
+  const v=hourlyAt(sp.zone,day.date,m,"wave_ft");
+  if(v!==null&&v!==undefined) return v*sp.exp;
+  const [lo,hi]=day.surf[sp.zone]; return ((lo+hi)/2)*sp.exp;
+}
+function windHourly(sp,day,m){
+  const d=hourlyAt(sp.zone,day.date,m,"wind_dir"), k=hourlyAt(sp.zone,day.date,m,"wind_kt");
+  return (d===null||k===null||d===undefined||k===undefined)?null:[d,k];
+}
+function hourScore(sp,day,m,exts){
+  const sr=toMin(day.sr), ss=toMin(day.ss);
+  if(m<sr-15||m>ss+15) return 0;
+  const wh=windHourly(sp,day,m);
+  const [wd,wk]= wh || windAt(day,m);
+  const clean=cleanliness(sp.facing,wd,wk);
+  const size=sizeAt(sp,day,m);
+  const rip=RIPV[day.rip[sp.zone]] ?? 0.45;
+  let s=sizeFactorFor(size,SKILL)*(0.38+0.62*clean)*tideFactor(exts,m);
+  s*= (1-(SKILL===0?0.34:0.14)*rip);
+  if(sp.type==="jetty"&&SKILL===0) s*=0.35;
+  return Math.max(0,Math.min(1,s*(0.80+0.20*sp.rel)));
+}
+function hourSeries(sp,day,exts){
+  const out=[]; for(let m=0;m<=1440;m+=15) out.push([m,hourScore(sp,day,m,exts)]);
+  return out;
+}
+/* the two best stretches of the day, built around the peaks rather than a
+   flat threshold — a five-hour "window" is not a time to paddle out */
+function findWindows(series){
+  const vals=series.map(p=>p[1]), peak=Math.max.apply(null,vals);
+  if(peak<=0.05) return [];
+  const used=new Array(series.length).fill(false), out=[];
+  for(let k=0;k<2;k++){
+    let bi=-1,bv=0;
+    for(let i=0;i<series.length;i++) if(!used[i]&&vals[i]>bv){bv=vals[i];bi=i;}
+    if(bi<0 || bv < peak*(k?0.74:0.90)) break;
+    let a=bi,b=bi; const th=bv*0.90, MAXHALF=6;      // at most 3 hours wide
+    while(a>0 && vals[a-1]>=th && bi-a<MAXHALF) a--;
+    while(b<series.length-1 && vals[b+1]>=th && b-bi<MAXHALF) b++;
+    while(series[b][0]-series[a][0]<75){             // never shorter than 75 min
+      if(a>0 && vals[a-1]>0) a--; else if(b<series.length-1 && vals[b+1]>0) b++; else break;
+    }
+    out.push({a:series[a][0],b:series[b][0],mean:bv});
+    for(let i=0;i<series.length;i++)
+      if(series[i][0]>=series[a][0]-120 && series[i][0]<=series[b][0]+120) used[i]=true;
+  }
+  return out.sort((x,y)=>x.a-y.a);
+}
+function windowsFor(sp,day,exts){return findWindows(hourSeries(sp,day,exts));}
+function pickFor(day){const o=ranked(day);return o[0]||SPOTS[0];}
+/* the stretch of coast the chosen home base actually sits on */
+function homeZone(){
+  const b=baseObj();
+  let best=SPOTS[0], bd=1e9;
+  SPOTS.forEach(s=>{const d=Math.abs(s.pos-b.pos); if(d<bd){bd=d;best=s;}});
+  return best.zone;
+}
+function homeZoneName(){return (ZONES.find(z=>z.key===homeZone())||{}).name||"your beaches";}
+
+/* say, from the data, what actually makes each window good */
+function windowWhy(sp,day,exts,w){
+  const mid=(w.a+w.b)/2, wh=windHourly(sp,day,mid), [wd,wk]= wh || windAt(day,mid), wf=windFactor(sp.facing,wd);
+  const dirWord = wf>0.45 ? "offshore" : (wf<-0.35 ? "onshore" : "sideshore");
+  const strength = wk<=6 ? "light" : (wk<=11 ? "moderate" : "fresh");
+  const v=tideAt(exts,mid), dv=tideAt(exts,mid+20)-tideAt(exts,mid-20);
+  const stage = Math.abs(v-0.5)<0.22 ? "mid-tide" : (v>0.5 ? "near the high" : "near the low");
+  const move = dv>0 ? "pushing in" : "draining out";
+  return "<b>"+winText(w)+"</b> — "+strength+" "+compass(wd)+" wind ("+dirWord+
+         "), tide "+move+" "+stage+".";
+}
+function winText(w){return fmtClock(w.a).replace(/(am|pm)/,"")+"–"+fmtClock(w.b);}
+
+function renderHourChart(sp,day,exts,sfx){
+  const svg=$("hourchart"+sfx); while(svg.firstChild)svg.removeChild(svg.firstChild);
+  const W=760,H=196,L=8,R=8,TOP=38,BOT=42;
+  const series=hourSeries(sp,day,exts), wins=findWindows(series);
+  const sr=toMin(day.sr), ss=toMin(day.ss);
+  const x=m=>L+(m/1440)*(W-L-R), y=v=>TOP+(1-v)*(H-TOP-BOT);
+  const alt=el("title",{}); alt.textContent="Surf conditions by hour at "+sp.name+". Best "+
+    (wins.map(winText).join(" and ")||"nothing worth it today")+"."; svg.appendChild(alt);
+
+  [[0,sr],[ss,1440]].forEach(([a,b])=>svg.appendChild(el("rect",
+    {x:x(a),y:TOP-16,width:Math.max(0,x(b)-x(a)),height:(H-BOT)-(TOP-16),fill:"var(--sunk)","fill-opacity":"0.5"})));
+
+  wins.forEach((w,i)=>{
+    svg.appendChild(el("rect",{x:x(w.a),y:TOP-16,width:x(w.b)-x(w.a),height:(H-BOT)-(TOP-16),
+      rx:3,fill:"var(--sun)","fill-opacity":i?0.12:0.20,stroke:"var(--sun)","stroke-width":"1.5",
+      "stroke-dasharray":i?"3 3":""}));
+    const lab=el("text",{x:(x(w.a)+x(w.b))/2,y:TOP-22,"text-anchor":"middle",fill:"var(--sun-text)",
+      "font-family":"var(--mono)","font-size":"11","font-weight":"700"});
+    lab.textContent=(i?"ALSO ":"BEST ")+winText(w); svg.appendChild(lab);
+  });
+
+  // real forecast wave height, scaled to the panel, as a faint reference trace
+  const hs=series.map(([m])=>sizeAt(sp,day,m));
+  const hmax=Math.max(1.5,Math.max.apply(null,hs));
+  let hp="";
+  series.forEach(([m],i)=>{hp+=(i?" L":"M")+x(m).toFixed(1)+" "+y(hs[i]/hmax*0.92).toFixed(1);});
+  svg.appendChild(el("path",{d:hp,fill:"none",stroke:"var(--gold)","stroke-width":"1.5",
+    "stroke-dasharray":"4 3","opacity":"0.85"}));
+  const hlab=el("text",{x:W-R,y:TOP-6,"text-anchor":"end",fill:"var(--gold-text)",
+    "font-family":"var(--mono)","font-size":"9.5"});
+  hlab.textContent="DASHED = WAVE HEIGHT, PEAK "+hmax.toFixed(1)+" FT"; svg.appendChild(hlab);
+
+  let d="";
+  series.forEach(([m,v],i)=>{d+=(i?" L":"M")+x(m).toFixed(1)+" "+y(v).toFixed(1);});
+  svg.appendChild(el("path",{d:d+" L"+x(1440)+" "+(H-BOT)+" L"+x(0)+" "+(H-BOT)+" Z",
+    fill:"var(--sea)","fill-opacity":"0.16"}));
+  svg.appendChild(el("path",{d:d,fill:"none",stroke:"var(--sea)","stroke-width":"2.5","stroke-linejoin":"round"}));
+  svg.appendChild(el("line",{x1:L,y1:H-BOT,x2:W-R,y2:H-BOT,stroke:"var(--line)","stroke-width":"1.5"}));
+  [6,9,12,15,18].forEach(h=>{const tx=el("text",{x:x(h*60),y:H-14,"text-anchor":"middle",
+    fill:"var(--muted)","font-family":"var(--mono)","font-size":"10"});
+    tx.textContent=fmtClock(h*60); svg.appendChild(tx);});
+  const ylab=el("text",{x:L,y:TOP-6,fill:"var(--muted)","font-family":"var(--mono)","font-size":"9.5"});
+  ylab.textContent="BETTER ↑"; svg.appendChild(ylab);
+  return wins;
+}
+
+/* ---------------- tide + daylight chart ---------------- */
+function parseTides(entry){ // "L 07:19" or "L 07:19 0.4"
+  return (entry||[]).map(s=>{const p=s.trim().split(/\s+/);
+    return {m:toMin(p[1]),type:p[0],ft:p.length>2?parseFloat(p[2]):null};});
+}
+function tideAt(exts,m){
+  const P=372; // half a tidal cycle, minutes
+  if(!exts.length) return 0.5;
+  const val=e=>e.type==="H"?1:0;
+  if(m<=exts[0].m){const prev={m:exts[0].m-P,type:exts[0].type==="H"?"L":"H"};
+    return interp(prev,exts[0],m);}
+  for(let i=0;i<exts.length-1;i++) if(m<=exts[i+1].m) return interp(exts[i],exts[i+1],m);
+  const last=exts[exts.length-1], nxt={m:last.m+P,type:last.type==="H"?"L":"H"};
+  return interp(last,nxt,m);
+  function interp(a,b,t){const f=(t-a.m)/(b.m-a.m);
+    return val(a)+(val(b)-val(a))*(1-Math.cos(Math.PI*Math.min(1,Math.max(0,f))))/2;}
+}
+function renderTideChart(day,tideEntry,nextEntry,sfx){
+  const svg=$("tidechart"+sfx); while(svg.firstChild)svg.removeChild(svg.firstChild);
+  const W=760,H=222, L=8,R=8, TOP=42, BOT=58;
+  const x=m=>L+(m/1440)*(W-L-R), y=v=>TOP+(1-v)*(H-TOP-BOT);
+  let exts=parseTides(tideEntry);
+  // anchor the curve with tomorrow's first change so the tail is real data, not a guess
+  const nx=parseTides(nextEntry)[0];
+  const anchored = nx ? exts.concat([{m:nx.m+1440,type:nx.type}]) : exts;
+  const sr=toMin(day.sr), ss=toMin(day.ss);
+
+  const alt=el("title",{});
+  alt.textContent="Tide through the day. "+(tideEntry||[]).join(", ")+
+    ". Daylight "+day.sr+" to "+day.ss+".";
+  svg.appendChild(alt);
+
+  // night
+  [[0,sr],[ss,1440]].forEach(([a,b])=>svg.appendChild(el("rect",
+    {x:x(a),y:TOP-18,width:Math.max(0,x(b)-x(a)),height:(H-BOT)-(TOP-18),fill:"var(--sunk)","fill-opacity":"0.5"})));
+  // surf window
+  svg.appendChild(el("rect",{x:x(sr),y:TOP-18,width:x(windowEndMin(day))-x(sr),height:(H-BOT)-(TOP-18),
+    fill:"var(--sun)","fill-opacity":"0.16",stroke:"var(--sun)","stroke-width":"1.5","stroke-dasharray":"3 3"}));
+  const wlab=el("text",{x:(x(sr)+x(windowEndMin(day)))/2,y:TOP-26,"text-anchor":"middle",
+    fill:"var(--sun-text)","font-family":"var(--mono)","font-size":"11","font-weight":"700"});
+  wlab.textContent="SURF THIS"; svg.appendChild(wlab);
+
+  // curve
+  let d="";
+  for(let m=0;m<=1440;m+=10){const px=x(m),py=y(tideAt(anchored,m)); d+=(m?" L":"M")+px.toFixed(1)+" "+py.toFixed(1);}
+  svg.appendChild(el("path",{d:d+" L"+x(1440)+" "+(H-BOT)+" L"+x(0)+" "+(H-BOT)+" Z",
+    fill:"var(--sea)","fill-opacity":"0.10"}));
+  svg.appendChild(el("path",{d:d,fill:"none",stroke:"var(--sea)","stroke-width":"2.5","stroke-linecap":"round"}));
+
+  // extremes
+  exts.forEach(e=>{
+    const px=x(e.m), py=y(e.type==="H"?1:0);
+    svg.appendChild(el("circle",{cx:px,cy:py,r:5.5,fill:"var(--surface)",stroke:"var(--sea)","stroke-width":"2.5"}));
+    const isH=e.type==="H";
+    const t1=el("text",{x:px,y:isH?py-15:py+23,"text-anchor":"middle",fill:"var(--ink)",
+      "font-family":"var(--mono)","font-size":"11","font-weight":"700"});
+    t1.textContent=(isH?"HIGH ":"LOW ")+fmtClock(e.m)+(e.ft!==null&&!isNaN(e.ft)?"  "+e.ft.toFixed(1)+"ft":"");
+    svg.appendChild(t1);
+  });
+  // sunrise and sunset
+  [[sr,"SUNRISE"],[ss,"SUNSET"]].forEach(([m,lab])=>{
+    const px=x(m);
+    svg.appendChild(el("line",{x1:px,y1:TOP-18,x2:px,y2:H-BOT,stroke:"var(--gold-text)",
+      "stroke-width":"1.5","stroke-dasharray":"2 4"}));
+    const tx=el("text",{x:px,y:TOP-5,"text-anchor":"middle",fill:"var(--gold-text)",
+      "font-family":"var(--mono)","font-size":"9.5","font-weight":"700"});
+    tx.textContent=lab+" "+fmtClock(m); svg.appendChild(tx);
+  });
+
+  // hour ticks
+  [0,6,12,18,24].forEach(h=>{const px=x(h*60);
+    const t=el("text",{x:px,y:H-10,"text-anchor":h===0?"start":(h===24?"end":"middle"),
+      fill:"var(--muted)","font-family":"var(--mono)","font-size":"10"});
+    t.textContent=h===24?"midnight":(h===0?"midnight":fmtClock(h*60)); svg.appendChild(t);});
+  const nH=exts.filter(e=>e.type==="H").length, nL=exts.length-nH;
+  $("tide-note"+sfx).textContent="Shaded = dark";
+  $("tide-src"+sfx).innerHTML="Tide predictions: <b>NOAA CO-OPS station 8652587, Oregon Inlet Marina</b> — "+
+    "the closest gauge to these beaches. Sunrise and sunset computed for Nags Head.";
+  $("tide-count"+sfx).innerHTML = exts.length>=4
+    ? "<b>Four tide changes today.</b> Two highs and two lows, about 6 hours 12 minutes apart."
+    : "<b>Only "+exts.length+" tide changes fall inside today</b> ("+nH+" high, "+nL+" low). "+
+      "The cycle runs 12 hours 25 minutes, not 12, so it drifts about 50 minutes later each day and some "+
+      "calendar days catch three instead of four."+
+      (nx ? " The next change is a "+(nx.type==="H"?"high":"low")+" at "+fmtClock(nx.m)+" tomorrow." : "");
+}
+
+/* ---------------- week wave chart ---------------- */
+function renderWeekChart(days){
+  const svg=$("weekchart"); while(svg.firstChild)svg.removeChild(svg.firstChild);
+  const W=760,H=200,L=10,R=10,TOP=26,BOT=44;
+  const HZ=homeZone();
+  const vals=days.map(d=>{const [a,b]=d.surf[HZ];return (a+b)/2;});
+  const max=Math.max(3,Math.ceil(Math.max.apply(null,vals)));
+  const bw=(W-L-R)/days.length, y=v=>TOP+(1-v/max)*(H-TOP-BOT);
+  const alt=el("title",{id:"week-alt"});
+  alt.textContent="Average wave height for "+homeZoneName()+": "+
+    days.map((d,i)=>d.short+" "+vals[i].toFixed(1)+" feet").join(", ")+".";
+  svg.appendChild(alt);
+  svg.appendChild(el("line",{x1:L,y1:H-BOT,x2:W-R,y2:H-BOT,stroke:"var(--line)","stroke-width":"1.5"}));
+  days.forEach((d,i)=>{
+    const cx=L+bw*i+bw/2, w=Math.min(58,bw-16), top=y(vals[i]);
+    svg.appendChild(el("rect",{x:cx-w/2,y:top,width:w,height:(H-BOT)-top,rx:4,
+      fill:i===0?"var(--sun)":"var(--sea)","fill-opacity":i===0?"1":"0.75"}));
+    const v=el("text",{x:cx,y:top-9,"text-anchor":"middle",fill:"var(--ink)",
+      "font-family":"var(--mono)","font-size":"12","font-weight":"700"});
+    v.textContent=vals[i].toFixed(1)+" ft"; svg.appendChild(v);
+    const lab=el("text",{x:cx,y:H-24,"text-anchor":"middle",fill:"var(--muted)",
+      "font-family":"var(--mono)","font-size":"10.5"});
+    lab.textContent=d.short.replace(/ \w+ /," "); svg.appendChild(lab);
+    const w2=el("text",{x:cx,y:H-9,"text-anchor":"middle",fill:"var(--muted)",
+      "font-family":"var(--mono)","font-size":"9.5"});
+    w2.textContent=compass(day_am(d))+" "+d.am[1]+"kt"; svg.appendChild(w2);
+  });
+  function day_am(d){return d.am[0];}
+}
+
+/* ---------------- render ---------------- */
+function isoToday(){const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function isoPlus(n){const d=new Date();d.setDate(d.getDate()+n);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+const FULLDAY={Mon:"Monday",Tue:"Tuesday",Wed:"Wednesday",Thu:"Thursday",Fri:"Friday",Sat:"Saturday",Sun:"Sunday"};
+function tabLabel(day){
+  if(day.date===isoToday()) return "Today";
+  if(day.date===isoPlus(1)) return "Tomorrow";
+  return FULLDAY[day.short.split(" ")[0]]||day.short;
+}
+function dayPanelHTML(i){
+  const s=String(i);
+  return '<section class="panel" id="p-day'+s+'" role="tabpanel"'+(i?' hidden':'')+'>'+
+   '<div class="call"><div class="call-top"><div>'+
+     '<div class="when" id="c-when'+s+'"></div><div class="verdict" id="c-verdict'+s+'"></div>'+
+     '<div class="where"><a id="c-where'+s+'" href="#" target="_blank" rel="noopener"></a></div>'+
+     '<div class="sub" id="c-sub'+s+'"></div></div>'+
+     '<div class="go"><div class="l">Paddle out</div><div class="t" id="c-window'+s+'"></div>'+
+       '<div class="t2" id="c-window2'+s+'"></div></div>'+
+   '</div></div>'+
+   '<div class="sec" id="alerts'+s+'"><div class="sec-head"><h2>Heads up</h2>'+
+     '<span class="hint">Hazards, and what moved since last night.</span></div>'+
+     '<div class="cols2" id="hazards'+s+'"></div></div>'+
+   '<div class="sec"><div class="sec-head"><h2>At a glance</h2></div>'+
+     '<div class="tiles" id="tiles'+s+'"></div></div>'+
+   (i===0?'<div class="sec" id="buoysec"><div class="sec-head"><h2>In the water right now</h2>'+
+     '<span class="hint">Measured by a buoy offshore, not forecast — the part the pro sites lead with. Today only; it is an observation, not something that can be predicted for later in the week.</span></div>'+
+     '<div class="tiles" id="buoy"></div><div class="callout" id="buoywhy"></div></div>':'')+
+   '<div class="sec"><div class="sec-head"><h2>When to paddle out</h2>'+
+     '<span class="hint">Wave height is a once-a-day forecast and barely moves hour to hour. '+
+     'The wind and the tide do, and they decide whether it is worth it.</span></div>'+
+     '<div class="chart"><div class="chart-h"><span class="t">Conditions by hour at <b id="hour-spot'+s+'"></b></span>'+
+       '<span class="s">Modelled from wind and tide</span></div>'+
+       '<svg id="hourchart'+s+'" viewBox="0 0 760 196" role="img"></svg>'+
+       '<div class="callout" id="hour-why'+s+'"></div></div></div>'+
+   '<div class="sec"><div class="sec-head"><h2>Tides</h2>'+
+     '<span class="hint" id="tidehint'+s+'">Mid-tide on the push is usually the best of it.</span></div>'+
+     '<div class="tidelist" id="tidelist'+s+'"></div>'+
+     '<div class="chart"><div class="chart-h"><span class="t">Tide and daylight</span>'+
+       '<span class="s" id="tide-note'+s+'"></span></div>'+
+       '<svg id="tidechart'+s+'" viewBox="0 0 760 222" role="img"></svg>'+
+       '<div class="callout" id="tide-count'+s+'"></div>'+
+       '<div class="src" id="tide-src'+s+'"></div></div></div>'+
+   '<div class="sec"><div class="sec-head"><h2>How big is that, really</h2>'+
+     '<span class="hint">Surfers size waves against a body, not a ruler.</span></div>'+
+     '<div class="sizekey" id="sizekey'+s+'"></div>'+
+     '<div class="refnote">Drawn against a six-foot person standing where the wave breaks. '+
+     'A wave measured at four feet reaches roughly the shoulders of someone six foot tall.</div></div>'+
+   '<div class="sec"><div class="sec-head"><h2>Where to go</h2>'+
+     '<span class="hint">Everything within a 30-minute drive, best first. Beaches in the same '+
+     'forecast zone share a wave height &mdash; what changes is who the wave suits. '+
+     'Nine breaks have a public camera; the rest have none on that stretch of sand.</span></div>'+
+     '<div class="rows" id="rows'+s+'"></div></div>'+
+   '</section>';
+}
+function fillDay(D,day,i){
+  const s=String(i), order=ranked(day), pick=order[0], ps=scoresFor(pick,day);
+  const zoneName=(ZONES.find(z=>z.key===pick.zone)||{}).name||"your beaches";
+  const ft=meanHeight(pick,day);
+  $("c-when"+s).textContent=day.dayName;
+  $("c-verdict"+s).textContent=verdict(ps[SKILL],day.conf)+" for you";
+  const wa=$("c-where"+s); wa.textContent=pick.name;
+  wa.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(pick.maps);
+  $("c-sub"+s).textContent=driveLabel(pick)+" from "+baseObj().name+". "+spotHeight(pick,day)+
+    " — "+body(ft).label.toLowerCase()+", "+compass(day.am[0])+" wind at "+day.am[1]+" knots.";
+  const idx0=D.days.indexOf(day);
+  const exts=parseTides((D.tides[idx0]||[])[1]||[]);
+  const wins=windowsFor(pick,day,exts);
+  $("c-window"+s).textContent = wins.length ? winText(wins[0]) : "Not worth it today";
+  $("c-window2"+s).textContent = wins.length>1 ? "or "+winText(wins[1]) : "";
+  $("tiles"+s).innerHTML=
+    tile("Wave height","At "+pick.name, spotHeight(pick,day), true)+
+    tile("Wind", windTrend(day,pick), compass(day.am[0])+" "+day.am[1]+" kt")+
+    tile("Water", wetsuit(D.buoy?D.buoy.wtmp_f:D.water_f), (D.buoy?Math.round(D.buoy.wtmp_f):D.water_f)+"°F")+
+    tile("Rip risk", zoneName, day.rip[pick.zone]);
+
+  const tideEntry=(D.tides[idx0]||[])[1]||[], nextEntry=(D.tides[idx0+1]||[])[1]||[];
+  $("hour-spot"+s).textContent=pick.name;
+  renderHourChart(pick,day,exts,s);
+  $("hour-why"+s).innerHTML = wins.length
+    ? (wins.length>1 ? "<b>Two windows today.</b> " : "<b>One window today.</b> ")+
+      "Ranked best first, with what makes each one work:<br>"+
+      wins.slice().sort((a,b)=>b.mean-a.mean).map(w=>"&bull; "+windowWhy(pick,day,exts,w)).join("<br>")
+    : "<b>Nothing lines up today.</b> Either it is too small for your level, or the wind is on it from dawn to dark.";
+  $("tidelist"+s).innerHTML=parseTides(tideEntry).map(x=>{const isH=x.type==="H";
+    return '<div class="tideitem '+(isH?"hi":"lo")+'"><span class="k">'+(isH?"High tide":"Low tide")+
+           '</span><span class="v">'+fmtClock(x.m)+'</span>'+
+           (x.ft!==null&&!isNaN(x.ft)?'<span class="ft">'+x.ft.toFixed(1)+' ft</span>':'')+'</div>';}).join("");
+  renderTideChart(day,tideEntry,nextEntry,s);
+  const td=Math.abs(baseObj().pos-41);   // gauge 8652587 sits at Oregon Inlet
+  $("tidehint"+s).textContent="Mid-tide on the push is usually the best of it."+
+    (td>30?" Measured at Oregon Inlet, about "+Math.round(td)+" miles from "+baseObj().name+
+      " — expect the turn a little earlier or later on your beach.":"");
+
+  const curLab=body(ft).label;
+  $("sizekey"+s).innerHTML=BODY.slice(0,6).map((b,k)=>{
+    const lo=k===0?0:BODY[k-1][0];
+    return '<div class="sizecell'+(b[1]===curLab?" now":"")+'">'+waveGlyph((lo+b[0])/2)+
+      '<div class="ft">'+(k===0?"under 1 ft":lo+"–"+b[0]+" ft")+'</div>'+
+      '<div class="lab">'+b[1]+'</div></div>';}).join("");
+
+  $("rows"+s).innerHTML=order.length
+    ? order.map(x=>spotRow(x,day,x===pick,exts)).join("")
+    : '<div class="notice">No surf spots within 30 minutes of '+esc(baseObj().name)+'. Try a different home base.</div>';
+
+  const boxes=(day.hazards||[]).slice();
+  if(i===0&&D.changed) boxes.push({title:"Since last night's update — "+D.changed.title,body:D.changed.body});
+  $("hazards"+s).innerHTML=boxes.length
+    ? boxes.map((h,k)=>'<div class="notice '+(k===0?"warm":(k===1?"gold":""))+'"><strong>'+
+        esc(h.title)+'</strong> '+esc(h.body)+'</div>').join("")
+    : '<div class="notice"><strong>Nothing to flag.</strong> No hazards in the forecast for this day beyond the usual rip risk shown above.</div>';
+  $("alerts"+s).hidden=false;
+}
+
+let DAYSHOWN=[];
+function buildTabs(D){
+  const today=isoToday();
+  let start=D.days.findIndex(d=>d.date>=today);
+  if(start<0) start=0;
+  DAYSHOWN=D.days.slice(start,start+3);
+  $("daypanels").innerHTML=DAYSHOWN.map((d,i)=>dayPanelHTML(i)).join("");
+  const items=DAYSHOWN.map((d,i)=>[tabLabel(d),"p-day"+i])
+    .concat([["This week","p-week"],["Every spot","p-spots"],["Learn","p-learn"]]);
+  $("tabs").innerHTML=items.map(([lab,id],i)=>
+    '<button class="tab" role="tab" aria-selected="'+(i===0)+'" aria-controls="'+id+'">'+esc(lab)+'</button>').join("");
+  document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x===tab?"true":"false"));
+    const want=tab.getAttribute("aria-controls");
+    document.querySelectorAll(".panel").forEach(p=>{p.hidden = p.id!==want;});
+    window.scrollTo({top:0,behavior:"smooth"});
+  }));
+  document.querySelectorAll(".panel").forEach(p=>{p.hidden = p.id!=="p-day0";});
+}
+
+function render(D){
+  buildTabs(D);
+  $("mast-eyebrow").textContent="Nightly surf call · "+baseObj().name+", North Carolina";
+  $("meta").innerHTML="Updated "+esc(D.built)+"<br>Next update tonight, 8:00 PM";
+  DAYSHOWN.forEach((d,i)=>fillDay(D,d,i));
+  renderBuoy(D);
+
+  renderWeekChart(D.days);
+  $("weekzone").textContent=homeZoneName()+" · feet";
+  $("week").innerHTML=D.days.map((d,i)=>dayCard(d,parseTides((D.tides[i]||[])[1]||[]))).join("");
+  $("outlook-range").textContent=D.tides[0][0]+" to "+D.tides[D.tides.length-1][0];
+  $("outlook").innerHTML="<strong>"+esc(D.outlook.headline)+"</strong> "+esc(D.outlook.body)+
+    (D.outlook.watchFor?"<br><br><strong>What would change it.</strong> "+esc(D.outlook.watchFor):"")+
+    (D.outlook.tideNote?"<br><br><strong>Tide timing.</strong> "+esc(D.outlook.tideNote):"");
+  $("tides").innerHTML=D.tides.map(x=>
+    '<tr><td class="num">'+esc(x[0])+'</td><td class="num">'+x[1].map(esc).join(" &nbsp; ")+'</td></tr>').join("");
+
+  const ref=DAYSHOWN[0]||D.days[0];
+  $("spots-day").textContent=tabLabel(ref).toLowerCase()==="today"?"today":tabLabel(ref);
+  const refExts=parseTides((D.tides[D.days.indexOf(ref)]||[])[1]||[]);
+  $("zones").innerHTML=ZONES.map(z=>zoneBlock(z,ref,refExts)).join("");
+  $("key").innerHTML=LABELS.map((l,i)=>
+    '<div class="row"><div></div><div><div class="nm q'+i+'">'+l+'</div><div class="meta">'+
+    ["Not enough wave to ride at your level.","Barely worth it — you would be waiting a lot.",
+     "A real session. Not memorable, but you will catch waves.",
+     "Everything lines up. Go.","As good as this coast gets."][i]+
+    '</div></div><div></div><div class="ht"><span class="mini q'+i+'">'+
+    [0,1,2,3].map(n=>'<i class="'+(n<i?"on":"")+'"></i>').join("")+'</span></div></div>').join("");
+  $("gloss").innerHTML=GLOSS.map(g=>
+    '<div class="gterm"><div class="g">'+esc(g[0])+'</div><div class="b">'+esc(g[1])+'</div>'+
+    '<div class="have'+(g[2]?"":" no")+'">'+esc(g[2]?"On this page: "+g[3]:"Not here: "+g[3])+'</div></div>').join("");
+  $("srcnote").textContent=D.sourceNote||"";
+}
+
+function windTrend(day,sp){
+  const a=day.am[1], b=day.pm[1];
+  const wf=windFactor(sp.facing,day.am[0]);
+  const dir = wf>0.45?"offshore":(wf<-0.35?"onshore":"sideshore");
+  if(b>a+3) return dir.charAt(0).toUpperCase()+dir.slice(1)+", building through the day";
+  if(a>b+3) return dir.charAt(0).toUpperCase()+dir.slice(1)+", easing through the day";
+  return dir.charAt(0).toUpperCase()+dir.slice(1)+", steady all day";
+}
+function periodRead(s){
+  if(s>=13) return ["Long-period groundswell","Born from a distant storm. Lines up, breaks with real power, and holds its shape."];
+  if(s>=10) return ["Groundswell","Organised and clean. This is what makes a day worth driving for."];
+  if(s>=8)  return ["Mixed swell","Some organisation, some local chop. Rideable, rarely memorable."];
+  return ["Windswell","Made by nearby wind. Short, weak, closes out — the ordinary Outer Banks summer day."];
+}
+function wetsuit(f){
+  if(f>=72) return "Trunks or a swimsuit.";
+  if(f>=66) return "Springsuit or a 2mm top.";
+  if(f>=60) return "3/2 full suit.";
+  if(f>=54) return "4/3 full suit, maybe boots.";
+  return "5/4 with boots, gloves and a hood.";
+}
+function renderBuoy(D){
+  const b=D.buoy;
+  if(!b){ $("buoysec").hidden=true; return; }
+  const [pl,pd]=periodRead(b.dpd_s);
+  $("buoy").innerHTML=
+    tile("Wave height","Open water, not the beach", b.wvht_ft+" ft")+
+    tile("Swell period", pl, b.dpd_s+" sec", true)+
+    tile("Swell from","Direction it is travelling out of", compass(b.mwd_deg)+" "+Math.round(b.mwd_deg)+"°")+
+    tile("Water", wetsuit(b.wtmp_f), Math.round(b.wtmp_f)+"°F");
+  const st=b.stale?'<div class="notice warm" style="margin-bottom:12px"><strong>This reading is not current.</strong> '+
+    'Buoy '+esc(b.station)+' last reported '+esc(b.at)+'. Treat the period and direction as the last known state, '+
+    'not what is in the water this minute.</div>':"";
+  const bd=Math.abs(baseObj().pos-12);   // buoy 44100 sits off Duck
+  const far=bd>30?" It sits off Duck, roughly "+Math.round(bd)+" miles up the coast from "+
+    baseObj().name+", so treat it as the northern banks rather than your own beach.":"";
+  $("buoywhy").innerHTML=st+"<b>Period is the number the pros read first.</b> "+pd+
+    " Two feet at twelve seconds is a different ocean from two feet at five. Height tells you how big; "+
+    "period tells you whether it is worth paddling for. Right now: <b>"+b.dpd_s+" seconds</b> from the <b>"+
+    compass(b.mwd_deg)+"</b>. Reading from NDBC buoy "+b.station+" ("+b.name+"), "+b.at+"."+far;
+}
+function tile(k,n,v,hot){
+  return '<div class="tile"><span class="k">'+esc(k)+'</span><span class="v'+(hot?" sun":"")+'">'+esc(v)+
+         '</span><span class="n">'+esc(n)+'</span></div>';
+}
+function spotRow(s,day,isPick,exts){
+  const sc=scoresFor(s,day), n=level(sc[SKILL],day.conf), ft=meanHeight(s,day);
+  const w=exts?windowsFor(s,day,exts):[];
+  const wtxt=w.length? w.map(winText).join("  ·  ") : "no good window";
+  const dots='<span class="d">'+[0,1,2,3].map(i=>'<i'+(i<n?' style="background:var(--f'+n+')"':'')+'></i>').join("")+'</span>';
+  const url="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.maps);
+  return '<div class="row'+(isPick?" pick":"")+'">'+
+    waveGlyph(ft)+
+    '<div><div class="nm"><a href="'+url+'" target="_blank" rel="noopener">'+esc(s.name)+'</a></div>'+
+    '<div class="meta">'+driveLabel(s)+' from '+esc(baseObj().name)+
+      (s.cam?' &middot; <a class="cam" href="'+s.cam+'" target="_blank" rel="noopener">Live cam</a>':'')+'</div>'+
+    '<div class="winline">Go <b>'+esc(wtxt)+'</b></div>'+alsoFor(s,day)+
+    '</div>'+
+    '<div class="rate"><span class="w q'+n+'">'+verdict(sc[SKILL],day.conf)+' for you</span>'+dots+'</div>'+
+    '<div class="ht"><span class="big">'+spotHeight(s,day)+'</span>'+
+    '<span class="desc">'+body(ft).label+'</span></div></div>';
+}
+function zoneBlock(z,day,exts){
+  const [lo,hi]=day.surf[z.key];
+  const rows=SPOTS.filter(s=>s.zone===z.key).map(s=>spotRow(s,day,false,exts)).join("");
+  return '<div class="sec"><div class="sec-head"><h2>'+esc(z.name)+'</h2>'+
+    '<span class="hint">'+esc(z.desc)+'</span></div>'+
+    '<div class="tidelist"><div class="tideitem"><span class="k">Forecast surf</span>'+
+    '<span class="v">'+lo+'–'+hi+' ft</span></div>'+
+    '<div class="tideitem"><span class="k">Rip risk</span><span class="v">'+esc(day.rip[z.key])+'</span></div></div>'+
+    '<div class="rows">'+rows+'</div></div>';
+}
+function dayCard(day,exts){
+  const zb=Math.max.apply(null,near().map(s=>scoresFor(s,day)[SKILL]));
+  const [lo,hi]=day.surf[homeZone()];
+  const conf={high:"Confident",medium:"Likely",low:"Low confidence"}[day.conf];
+  return '<article class="day"><div class="dh"><span class="dd">'+esc(day.short)+'</span>'+
+    '<span class="dc">'+conf+'</span></div><div class="big q'+level(zb,day.conf)+'">'+verdict(zb,day.conf)+'</div>'+
+    '<div class="kv"><span class="k">Waves</span><span class="v">'+lo+'–'+hi+' ft</span>'+
+    '<span class="k">Wind</span><span class="v">'+compass(day.am[0])+' '+day.am[1]+' kt</span>'+
+    '<span class="k">Go</span><span class="v">'+
+      (function(){const w=exts?windowsFor(day===null?null:pickFor(day),day,exts):[];
+        return w.length? w.map(winText).join(" · ") : "nothing worth it";})()+'</span>'+
+    '<span class="k">Low</span><span class="v">'+day.lo[0]+'</span></div></article>';
+}
+function learn(){
+  const now=new Date(), start=new Date(now.getFullYear(),0,0);
+  const di=Math.floor((now-start)/86400000);
+  const t=TERMS[di%TERMS.length], r=RULES[di%RULES.length];
+  $("term-title").textContent=t[0]; $("term-body").textContent=t[1];
+  $("term-idx").textContent="Term "+((di%TERMS.length)+1)+" of "+TERMS.length;
+  $("rule-title").textContent=r[0]; $("rule-body").textContent=r[1];
+  $("rule-idx").textContent="Rule "+((di%RULES.length)+1)+" of "+RULES.length;
+}
+BASE=load("obx.base","Manteo"); SKILL=parseInt(load("obx.skill","0"),10)||0;
+if(!BASES.some(b=>b.name===BASE)) BASE="Manteo";
+$("base").innerHTML=BASES.map(b=>'<option'+(b.name===BASE?" selected":"")+'>'+esc(b.name)+'</option>').join("");
+$("skill").value=String(SKILL);
+$("base").addEventListener("change",e=>{BASE=e.target.value;save("obx.base",BASE);render(SEED);});
+$("skill").addEventListener("change",e=>{SKILL=parseInt(e.target.value,10)||0;save("obx.skill",String(SKILL));render(SEED);});
+function sourceBanner(D){
+  const s=D.sources||{}, bad=Object.keys(s).filter(k=>s[k]!=="ok");
+  const el2=document.getElementById("srcbanner");
+  if(!bad.length){el2.hidden=true;return;}
+  el2.hidden=false;
+  el2.innerHTML='<div class="notice warm"><strong>Some data could not be refreshed.</strong> '+
+    bad.map(k=>esc(k)).join(", ")+' failed on the last run, so those figures are carried over from '+
+    'the previous update. Everything else is current.</div>';
+}
+function boot(){
+  learn();
+  fetch("data.json?t="+Date.now())
+    .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+    .then(D=>{ SEED=D; render(D); sourceBanner(D); })
+    .catch(e=>{
+      document.getElementById("tabs").innerHTML="";
+      document.getElementById("daypanels").innerHTML=
+        '<div class="notice warm"><strong>Could not load the forecast.</strong> '+
+        'data.json did not load ('+esc(e.message)+'). The scheduled job may not have run yet. '+
+        'Check the Actions tab in the repository.</div>';
+    });
+}
+boot();
+setInterval(boot, 15*60*1000);   // pick up a new build without a manual refresh
+</script>
+</body>
+</html>
