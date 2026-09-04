@@ -331,6 +331,20 @@ footer a{color:var(--sea-text)}
 
 .row .meta a.cam{color:var(--sea-text);text-decoration:none;font-weight:700;transition:color .12s ease}
 .row .meta a.cam:hover,.row .meta a.cam:focus-visible{color:var(--sun-text)}
+
+/* ---- outbound links: say where they go, and be thumb-sized ----
+   Padding grows the tap target to >=44px; the matching negative margin
+   keeps the surrounding layout exactly where it was. */
+.maplink{display:inline-flex;align-items:center;gap:6px;
+  padding:13px 5px;margin:-13px -5px;text-decoration:none}
+.call .where a.maplink{padding:10px 5px;margin:-10px -5px}
+.maplink .pin{width:.7em;height:.7em;flex:none;opacity:.72}
+.maplink:hover .pin,.maplink:focus-visible .pin{opacity:1}
+
+.row .meta a.cam{display:inline-flex;align-items:center;gap:5px;
+  padding:15px 4px;margin:-15px -4px}
+.row .meta a.cam .cci{width:12px;height:12px;flex:none;opacity:.8}
+.row .meta a.cam:hover .cci,.row .meta a.cam:focus-visible .cci{opacity:1}
 </style>
 
 </head>
@@ -486,6 +500,12 @@ function driveLabel(sp){const m=driveMins(sp);
   return (baseObj().name==="Manteo"?"":"~")+s;}
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+// Outbound-link affordances. Decorative only - the accessible name comes from
+// each link's aria-label, so these are hidden from screen readers.
+const PIN_SVG = '<svg class="pin" viewBox="0 0 16 16" aria-hidden="true" focusable="false">'+
+  '<path fill="currentColor" d="M8 1.5a4.6 4.6 0 0 0-4.6 4.6c0 3.4 4.2 7.9 4.4 8.1a.3.3 0 0 0 .4 0c.2-.2 4.4-4.7 4.4-8.1A4.6 4.6 0 0 0 8 1.5Zm0 6.3a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z"/></svg>';
+const CAM_SVG = '<svg class="cci" viewBox="0 0 16 16" aria-hidden="true" focusable="false">'+
+  '<path fill="currentColor" d="M1.8 4h8.1c.6 0 1.1.5 1.1 1.1v5.8c0 .6-.5 1.1-1.1 1.1H1.8c-.6 0-1.1-.5-1.1-1.1V5.1C.7 4.5 1.2 4 1.8 4Zm10.5 2.6 2.6-1.8c.2-.2.4 0 .4.2v6c0 .2-.2.4-.4.2l-2.6-1.8V6.6Z"/></svg>';
 const el = (n,a) => { const e=document.createElementNS(SVGNS,n); for(const k in a) e.setAttribute(k,a[k]); return e; };
 
 function compass(d){const p=["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
@@ -836,7 +856,7 @@ function dayPanelHTML(i){
   return '<section class="panel" id="p-day'+s+'" role="tabpanel"'+(i?' hidden':'')+'>'+
    '<div class="call"><div class="call-top"><div>'+
      '<div class="when" id="c-when'+s+'"></div><div class="verdict" id="c-verdict'+s+'"></div>'+
-     '<div class="where"><a id="c-where'+s+'" href="#" target="_blank" rel="noopener"></a></div>'+
+     '<div class="where"><a class="maplink" id="c-where'+s+'" href="#" target="_blank" rel="noopener noreferrer"></a></div>'+
      '<div class="sub" id="c-sub'+s+'"></div></div>'+
      '<div class="go"><div class="l">Paddle out</div><div class="t" id="c-window'+s+'"></div>'+
        '<div class="t2" id="c-window2'+s+'"></div></div>'+
@@ -882,8 +902,11 @@ function fillDay(D,day,i){
   const ft=meanHeight(pick,day);
   $("c-when"+s).textContent=day.dayName;
   $("c-verdict"+s).textContent=verdict(ps[SKILL],day.conf)+" for you";
-  const wa=$("c-where"+s); wa.textContent=pick.name;
+  const wa=$("c-where"+s);
+  wa.innerHTML=esc(pick.name)+PIN_SVG;
   wa.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(pick.maps);
+  wa.setAttribute("aria-label","Directions to "+pick.name+" — opens Google Maps in a new tab");
+  wa.title="Directions to "+pick.name+" (Google Maps)";
   $("c-sub"+s).textContent=driveLabel(pick)+" from "+baseObj().name+". "+spotHeight(pick,day)+
     " — "+body(ft).label.toLowerCase()+", "+compass(day.am[0])+" wind at "+day.am[1]+" knots.";
   const idx0=D.days.indexOf(day);
@@ -1043,9 +1066,13 @@ function spotRow(s,day,isPick,exts){
   const url="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.maps);
   return '<div class="row'+(isPick?" pick":"")+'">'+
     waveGlyph(ft)+
-    '<div><div class="nm"><a href="'+url+'" target="_blank" rel="noopener">'+esc(s.name)+'</a></div>'+
+    '<div><div class="nm"><a class="maplink" href="'+url+'" target="_blank" rel="noopener noreferrer"'+
+      ' aria-label="Directions to '+esc(s.name)+' &mdash; opens Google Maps in a new tab"'+
+      ' title="Directions to '+esc(s.name)+' (Google Maps)">'+esc(s.name)+PIN_SVG+'</a></div>'+
     '<div class="meta">'+driveLabel(s)+' from '+esc(baseObj().name)+
-      (s.cam?' &middot; <a class="cam" href="'+s.cam+'" target="_blank" rel="noopener">Live cam</a>':'')+'</div>'+
+      (s.cam?' &middot; <a class="cam" href="'+s.cam+'" target="_blank" rel="noopener noreferrer"'+
+        ' aria-label="Live webcam for '+esc(s.name)+' &mdash; opens in a new tab"'+
+        ' title="Live webcam for '+esc(s.name)+' (opens in a new tab)">'+CAM_SVG+'Live cam</a>':'')+'</div>'+
     '<div class="winline">Go <b>'+esc(wtxt)+'</b></div>'+alsoFor(s,day)+
     '</div>'+
     '<div class="rate"><span class="w q'+n+'">'+verdict(sc[SKILL],day.conf)+' for you</span>'+dots+'</div>'+
