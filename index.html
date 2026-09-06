@@ -40,13 +40,22 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
          color:var(--muted);font-weight:700}
 
-/* ---- the lighthouse rule: Hatteras spiral as a diagonal barber stripe ---- */
-.spiral{height:8px;border-radius:1px;
-  background:repeating-linear-gradient(118deg,var(--ink) 0 6px,transparent 6px 13px);
-  opacity:.85}
+/* ---- wave divider: two looping SVG wave layers, replaces the old barber stripe ---- */
+.wave-divider{position:relative;height:28px;overflow:hidden;border-radius:2px}
+.wave-divider svg{position:absolute;top:0;left:0;width:200%;height:100%;display:block}
+.wave-divider .wave-back{fill:var(--sea);opacity:.32;animation:waveScroll 16s linear infinite}
+.wave-divider .wave-front{fill:var(--sea);opacity:.9;animation:waveScroll 10s linear infinite reverse}
+@keyframes waveScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---- scroll reveal: fade + rise, once, for the major sections ---- */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.is-visible{opacity:1;transform:translateY(0)}
+@media (prefers-reduced-motion: reduce){
+  .wave-divider svg{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+}
 
 /* ---- masthead ---- */
-.mast .eyebrow{color:var(--ink)}
 .mast{padding-top:44px;display:flex;flex-direction:column;gap:14px}
 .mast-row{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px}
 .mast h1{font-family:var(--display);font-size:clamp(40px,8.5vw,76px);line-height:.88;
@@ -360,15 +369,17 @@ footer a{color:var(--sea-text)}
   <header class="mast">
     <div class="mast-row">
       <div>
-        <div class="eyebrow" id="mast-eyebrow">Nightly surf call</div>
         <h1>OBX<br><span class="sun">Dawn Patrol</span></h1>
       </div>
       <div class="meta" id="meta"></div>
     </div>
-    <div class="spiral"></div>
+    <div class="wave-divider" aria-hidden="true">
+      <svg class="wave-back" viewBox="0 0 1600 28" preserveAspectRatio="none"><path d="M0,12 Q25.0,8.0 50.0,12 T100.0,12 T150.0,12 T200.0,12 T250.0,12 T300.0,12 T350.0,12 T400.0,12 T450.0,12 T500.0,12 T550.0,12 T600.0,12 T650.0,12 T700.0,12 T750.0,12 T800.0,12 T850.0,12 T900.0,12 T950.0,12 T1000.0,12 T1050.0,12 T1100.0,12 T1150.0,12 T1200.0,12 T1250.0,12 T1300.0,12 T1350.0,12 T1400.0,12 T1450.0,12 T1500.0,12 T1550.0,12 T1600.0,12 L1600,28 L0,28 Z"/></svg>
+      <svg class="wave-front" viewBox="0 0 1600 28" preserveAspectRatio="none"><path d="M0,19 Q40.0,12.0 80.0,19 T160.0,19 T240.0,19 T320.0,19 T400.0,19 T480.0,19 T560.0,19 T640.0,19 T720.0,19 T800.0,19 T880.0,19 T960.0,19 T1040.0,19 T1120.0,19 T1200.0,19 T1280.0,19 T1360.0,19 T1440.0,19 T1520.0,19 T1600.0,19 L1600,28 L0,28 Z"/></svg>
+    </div>
   </header>
 
-  <div class="controls">
+  <div class="controls reveal">
     <div class="ctl">
       <label for="base">Your home base</label>
       <select id="base"></select>
@@ -385,11 +396,11 @@ footer a{color:var(--sea-text)}
     </div>
   </div>
 
-  <div class="tabs" role="tablist" id="tabs"></div>
-  <div id="daypanels"></div>
+  <div class="tabs reveal" role="tablist" id="tabs"></div>
+  <div id="daypanels" class="reveal"></div>
 
   <!-- ==================== WEEK ==================== -->
-  <section class="panel" id="p-week" role="tabpanel" hidden>
+  <section class="panel reveal" id="p-week" role="tabpanel" hidden>
     <div class="chart">
       <div class="chart-h"><span class="t">Wave height, next seven days</span><span class="s" id="weekzone"></span></div>
       <svg id="weekchart" viewBox="0 0 760 200" role="img" aria-labelledby="week-alt"></svg>
@@ -411,7 +422,7 @@ footer a{color:var(--sea-text)}
   </section>
 
   <!-- ==================== SPOTS ==================== -->
-  <section class="panel" id="p-spots" role="tabpanel" hidden>
+  <section class="panel reveal" id="p-spots" role="tabpanel" hidden>
     <p class="lede">Every break from Corolla down to Ocracoke, in geographic order, scored for
     <b id="spots-day"></b>. The <b>Where to go</b> list on the day tabs is the short version — only what is inside
     a 30-minute drive, ranked best first. This is the full map: the whole coastline in order, including the breaks
@@ -428,7 +439,7 @@ footer a{color:var(--sea-text)}
   </section>
 
   <!-- ==================== LEARN ==================== -->
-  <section class="panel" id="p-learn" role="tabpanel" hidden>
+  <section class="panel reveal" id="p-learn" role="tabpanel" hidden>
     <div class="learn">
       <div class="card">
         <div class="eyebrow">Today's term</div>
@@ -456,7 +467,7 @@ footer a{color:var(--sea-text)}
     </div>
   </section>
 
-  <footer>
+  <footer class="reveal">
     Surf height and rip risk from the National Weather Service surf zone forecasts
     (<a href="https://tgftp.nws.noaa.gov/data/raw/fz/fzus52.kmhx.srf.mhx.txt">Newport</a>,
     <a href="https://tgftp.nws.noaa.gov/data/raw/fz/fzus51.kakq.srf.akq.txt">Wakefield</a>).
@@ -986,7 +997,6 @@ function buildTabs(D){
 
 function render(D){
   buildTabs(D);
-  $("mast-eyebrow").textContent="Nightly surf call · "+baseObj().name+", North Carolina";
   $("meta").innerHTML="Updated "+esc(D.built)+"<br>Next update tonight, 8:00 PM";
   DAYSHOWN.forEach((d,i)=>fillDay(D,d,i));
   renderBuoy(D);
@@ -1134,6 +1144,18 @@ function sourceBanner(D){
     bad.map(k=>esc(k)).join(", ")+' failed on the last run, so those figures are carried over from '+
     'the previous update. Everything else is current.</div>';
 }
+function initReveal(){
+  const els=document.querySelectorAll(".reveal");
+  if(!("IntersectionObserver" in window)||matchMedia("(prefers-reduced-motion: reduce)").matches){
+    els.forEach(el=>el.classList.add("is-visible")); return;
+  }
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){entry.target.classList.add("is-visible"); io.unobserve(entry.target);}
+    });
+  },{threshold:0,rootMargin:"0px 0px -40px 0px"});
+  els.forEach(el=>io.observe(el));
+}
 function boot(){
   learn();
   fetch("data.json?t="+Date.now())
@@ -1148,6 +1170,7 @@ function boot(){
     });
 }
 boot();
+initReveal();
 setInterval(boot, 15*60*1000);   // pick up a new build without a manual refresh
 </script>
 </body>
