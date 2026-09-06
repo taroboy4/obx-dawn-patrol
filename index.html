@@ -40,19 +40,47 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
          color:var(--muted);font-weight:700}
 
-/* ---- wave divider: two looping SVG wave layers, replaces the old barber stripe ---- */
+/* ---- wave divider: two looping SVG wave layers, replaces the old barber stripe ----
+   Slow and lazy on purpose - this is ambient motion, not something to notice ticking by. */
 .wave-divider{position:relative;height:28px;overflow:hidden;border-radius:2px}
 .wave-divider svg{position:absolute;top:0;left:0;width:200%;height:100%;display:block}
-.wave-divider .wave-back{fill:var(--sea);opacity:.32;animation:waveScroll 16s linear infinite}
-.wave-divider .wave-front{fill:var(--sea);opacity:.9;animation:waveScroll 10s linear infinite reverse}
+.wave-divider .wave-back{fill:var(--sea);opacity:.32;animation:waveScroll 46s linear infinite}
+.wave-divider .wave-front{fill:var(--sea);opacity:.9;animation:waveScroll 32s linear infinite reverse}
 @keyframes waveScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-/* ---- scroll reveal: fade + rise, once, for the major sections ---- */
-.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1)}
+/* ---- scroll reveal: fade + rise, once, for the major sections ----
+   Sections revealed in the same batch (e.g. everything above the fold at first
+   load) get a small staggered transition-delay set inline by initReveal(), so
+   they cascade in one after another instead of all popping in on top of each other. */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.16,1,.3,1)}
 .reveal.is-visible{opacity:1;transform:translateY(0)}
+
+/* ---- row-level cascade: each spot row rises on its own beat, keyed off --ri ---- */
+.row{opacity:0;transform:translateY(18px);
+  transition:opacity .55s ease calc(var(--ri,0)*55ms),transform .55s cubic-bezier(.16,1,.3,1) calc(var(--ri,0)*55ms)}
+.reveal.is-visible .row{opacity:1;transform:translateY(0)}
+
+/* ---- the rating dashes: grow left to right, staggered, once their row lands ---- */
+.d i{opacity:0;transform:scaleX(0);transform-origin:left;transition:opacity .3s ease,transform .3s ease}
+.reveal.is-visible .row .d i{opacity:1;transform:scaleX(1)}
+.row .d i:nth-child(1){transition-delay:calc(var(--ri,0)*55ms + 260ms)}
+.row .d i:nth-child(2){transition-delay:calc(var(--ri,0)*55ms + 330ms)}
+.row .d i:nth-child(3){transition-delay:calc(var(--ri,0)*55ms + 400ms)}
+.row .d i:nth-child(4){transition-delay:calc(var(--ri,0)*55ms + 470ms)}
+
+/* ---- SVG chart motion: solid data rises from the baseline, the dashed
+   reference trace wipes in left to right, like it's being drawn ---- */
+.chart-rise{transform-box:fill-box;transform-origin:bottom;animation:chartRise .9s cubic-bezier(.16,1,.3,1) both}
+.chart-wipe{transform-box:fill-box;transform-origin:left;animation:chartWipe 1.3s cubic-bezier(.16,1,.3,1) both}
+@keyframes chartRise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes chartWipe{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.chart-pop{transform-box:fill-box;transform-origin:center;animation:chartPop .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes chartPop{from{transform:scale(0)}to{transform:scale(1)}}
+
 @media (prefers-reduced-motion: reduce){
   .wave-divider svg{animation:none}
-  .reveal{opacity:1;transform:none;transition:none}
+  .reveal,.row,.d i{opacity:1;transform:none;transition:none}
+  .chart-rise,.chart-wipe,.chart-pop{animation:none}
 }
 
 /* ---- masthead ---- */
@@ -710,9 +738,10 @@ function renderHourChart(sp,day,exts,sfx){
   wins.forEach((w,i)=>{
     svg.appendChild(el("rect",{x:x(w.a),y:TOP-16,width:x(w.b)-x(w.a),height:(H-BOT)-(TOP-16),
       rx:3,fill:"var(--sun)","fill-opacity":i?0.12:0.20,stroke:"var(--sun)","stroke-width":"1.5",
-      "stroke-dasharray":i?"3 3":""}));
+      "stroke-dasharray":i?"3 3":"",class:"chart-rise",style:"animation-delay:"+(i*220)+"ms"}));
     const lab=el("text",{x:(x(w.a)+x(w.b))/2,y:TOP-22,"text-anchor":"middle",fill:"var(--sun-text)",
-      "font-family":"var(--mono)","font-size":"11","font-weight":"700"});
+      "font-family":"var(--mono)","font-size":"11","font-weight":"700",
+      class:"chart-rise",style:"animation-delay:"+(i*220+80)+"ms"});
     lab.textContent=(i?"ALSO ":"BEST ")+winText(w); svg.appendChild(lab);
   });
 
@@ -722,7 +751,7 @@ function renderHourChart(sp,day,exts,sfx){
   let hp="";
   series.forEach(([m],i)=>{hp+=(i?" L":"M")+x(m).toFixed(1)+" "+y(hs[i]/hmax*0.92).toFixed(1);});
   svg.appendChild(el("path",{d:hp,fill:"none",stroke:"var(--gold)","stroke-width":"1.5",
-    "stroke-dasharray":"4 3","opacity":"0.85"}));
+    "stroke-dasharray":"4 3","opacity":"0.85",class:"chart-wipe"}));
   const hlab=el("text",{x:W-R,y:TOP-6,"text-anchor":"end",fill:"var(--gold-text)",
     "font-family":"var(--mono)","font-size":"9.5"});
   hlab.textContent="DASHED = WAVE HEIGHT, PEAK "+hmax.toFixed(1)+" FT"; svg.appendChild(hlab);
@@ -730,8 +759,9 @@ function renderHourChart(sp,day,exts,sfx){
   let d="";
   series.forEach(([m,v],i)=>{d+=(i?" L":"M")+x(m).toFixed(1)+" "+y(v).toFixed(1);});
   svg.appendChild(el("path",{d:d+" L"+x(1440)+" "+(H-BOT)+" L"+x(0)+" "+(H-BOT)+" Z",
-    fill:"var(--sea)","fill-opacity":"0.16"}));
-  svg.appendChild(el("path",{d:d,fill:"none",stroke:"var(--sea)","stroke-width":"2.5","stroke-linejoin":"round"}));
+    fill:"var(--sea)","fill-opacity":"0.16",class:"chart-rise"}));
+  svg.appendChild(el("path",{d:d,fill:"none",stroke:"var(--sea)","stroke-width":"2.5","stroke-linejoin":"round",
+    class:"chart-rise"}));
   svg.appendChild(el("line",{x1:L,y1:H-BOT,x2:W-R,y2:H-BOT,stroke:"var(--line)","stroke-width":"1.5"}));
   [6,9,12,15,18].forEach(h=>{const tx=el("text",{x:x(h*60),y:H-14,"text-anchor":"middle",
     fill:"var(--muted)","font-family":"var(--mono)","font-size":"10"});
@@ -778,25 +808,30 @@ function renderTideChart(day,tideEntry,nextEntry,sfx){
     {x:x(a),y:TOP-18,width:Math.max(0,x(b)-x(a)),height:(H-BOT)-(TOP-18),fill:"var(--sunk)","fill-opacity":"0.5"})));
   // surf window
   svg.appendChild(el("rect",{x:x(sr),y:TOP-18,width:x(windowEndMin(day))-x(sr),height:(H-BOT)-(TOP-18),
-    fill:"var(--sun)","fill-opacity":"0.16",stroke:"var(--sun)","stroke-width":"1.5","stroke-dasharray":"3 3"}));
+    fill:"var(--sun)","fill-opacity":"0.16",stroke:"var(--sun)","stroke-width":"1.5","stroke-dasharray":"3 3",
+    class:"chart-rise"}));
   const wlab=el("text",{x:(x(sr)+x(windowEndMin(day)))/2,y:TOP-26,"text-anchor":"middle",
-    fill:"var(--sun-text)","font-family":"var(--mono)","font-size":"11","font-weight":"700"});
+    fill:"var(--sun-text)","font-family":"var(--mono)","font-size":"11","font-weight":"700",
+    class:"chart-rise",style:"animation-delay:80ms"});
   wlab.textContent="SURF THIS"; svg.appendChild(wlab);
 
   // curve
   let d="";
   for(let m=0;m<=1440;m+=10){const px=x(m),py=y(tideAt(anchored,m)); d+=(m?" L":"M")+px.toFixed(1)+" "+py.toFixed(1);}
   svg.appendChild(el("path",{d:d+" L"+x(1440)+" "+(H-BOT)+" L"+x(0)+" "+(H-BOT)+" Z",
-    fill:"var(--sea)","fill-opacity":"0.10"}));
-  svg.appendChild(el("path",{d:d,fill:"none",stroke:"var(--sea)","stroke-width":"2.5","stroke-linecap":"round"}));
+    fill:"var(--sea)","fill-opacity":"0.10",class:"chart-rise"}));
+  svg.appendChild(el("path",{d:d,fill:"none",stroke:"var(--sea)","stroke-width":"2.5","stroke-linecap":"round",
+    class:"chart-rise"}));
 
   // extremes
-  exts.forEach(e=>{
-    const px=x(e.m), py=y(e.type==="H"?1:0);
-    svg.appendChild(el("circle",{cx:px,cy:py,r:5.5,fill:"var(--surface)",stroke:"var(--sea)","stroke-width":"2.5"}));
+  exts.forEach((e,ei)=>{
+    const px=x(e.m), py=y(e.type==="H"?1:0), popDelay=(500+ei*140)+"ms";
+    svg.appendChild(el("circle",{cx:px,cy:py,r:5.5,fill:"var(--surface)",stroke:"var(--sea)","stroke-width":"2.5",
+      class:"chart-pop",style:"animation-delay:"+popDelay}));
     const isH=e.type==="H";
     const t1=el("text",{x:px,y:isH?py-15:py+23,"text-anchor":"middle",fill:"var(--ink)",
-      "font-family":"var(--mono)","font-size":"11","font-weight":"700"});
+      "font-family":"var(--mono)","font-size":"11","font-weight":"700",
+      class:"chart-pop",style:"animation-delay:"+popDelay});
     t1.textContent=(isH?"HIGH ":"LOW ")+fmtClock(e.m)+(e.ft!==null&&!isNaN(e.ft)?"  "+e.ft.toFixed(1)+"ft":"");
     svg.appendChild(t1);
   });
@@ -841,11 +876,13 @@ function renderWeekChart(days){
   svg.appendChild(alt);
   svg.appendChild(el("line",{x1:L,y1:H-BOT,x2:W-R,y2:H-BOT,stroke:"var(--line)","stroke-width":"1.5"}));
   days.forEach((d,i)=>{
-    const cx=L+bw*i+bw/2, w=Math.min(58,bw-16), top=y(vals[i]);
+    const cx=L+bw*i+bw/2, w=Math.min(58,bw-16), top=y(vals[i]), barDelay=(i*90)+"ms";
     svg.appendChild(el("rect",{x:cx-w/2,y:top,width:w,height:(H-BOT)-top,rx:4,
-      fill:i===0?"var(--sun)":"var(--sea)","fill-opacity":i===0?"1":"0.75"}));
+      fill:i===0?"var(--sun)":"var(--sea)","fill-opacity":i===0?"1":"0.75",
+      class:"chart-rise",style:"animation-delay:"+barDelay}));
     const v=el("text",{x:cx,y:top-9,"text-anchor":"middle",fill:"var(--ink)",
-      "font-family":"var(--mono)","font-size":"12","font-weight":"700"});
+      "font-family":"var(--mono)","font-size":"12","font-weight":"700",
+      class:"chart-rise",style:"animation-delay:calc("+barDelay+" + 90ms)"});
     v.textContent=vals[i].toFixed(1)+" ft"; svg.appendChild(v);
     const lab=el("text",{x:cx,y:H-24,"text-anchor":"middle",fill:"var(--muted)",
       "font-family":"var(--mono)","font-size":"10.5"});
@@ -963,7 +1000,7 @@ function fillDay(D,day,i){
       '<div class="lab">'+b[1]+'</div></div>';}).join("");
 
   $("rows"+s).innerHTML=order.length
-    ? order.map(x=>spotRow(x,day,x===pick,exts)).join("")
+    ? order.map((x,i)=>spotRow(x,day,x===pick,exts,false,i)).join("")
     : '<div class="notice">No surf spots within 30 minutes of '+esc(baseObj().name)+'. Try a different home base.</div>';
 
   const boxes=(day.hazards||[]).slice();
@@ -1074,13 +1111,13 @@ function tile(k,n,v,hot){
   return '<div class="tile"><span class="k">'+esc(k)+'</span><span class="v'+(hot?" sun":"")+'">'+esc(v)+
          '</span><span class="n">'+esc(n)+'</span></div>';
 }
-function spotRow(s,day,isPick,exts,showEmbed){
+function spotRow(s,day,isPick,exts,showEmbed,ri){
   const sc=scoresFor(s,day), n=level(sc[SKILL],day.conf), ft=meanHeight(s,day);
   const w=exts?windowsFor(s,day,exts):[];
   const wtxt=w.length? w.map(winText).join("  ·  ") : "no good window";
   const dots='<span class="d">'+[0,1,2,3].map(i=>'<i'+(i<n?' style="background:var(--f'+n+')"':'')+'></i>').join("")+'</span>';
   const url="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.maps);
-  return '<div class="row'+(isPick?" pick":"")+'">'+
+  return '<div class="row'+(isPick?" pick":"")+'" style="--ri:'+(ri||0)+'">'+
     waveGlyph(ft)+
     '<div><div class="nm"><a class="maplink" href="'+url+'" target="_blank" rel="noopener noreferrer"'+
       ' aria-label="Directions to '+esc(s.name)+' &mdash; opens Google Maps in a new tab"'+
@@ -1099,7 +1136,7 @@ function spotRow(s,day,isPick,exts,showEmbed){
 }
 function zoneBlock(z,day,exts){
   const [lo,hi]=day.surf[z.key];
-  const rows=SPOTS.filter(s=>s.zone===z.key).map(s=>spotRow(s,day,false,exts,true)).join("");
+  const rows=SPOTS.filter(s=>s.zone===z.key).map((s,i)=>spotRow(s,day,false,exts,true,i)).join("");
   return '<div class="sec"><div class="sec-head"><h2>'+esc(z.name)+'</h2>'+
     '<span class="hint">'+esc(z.desc)+'</span></div>'+
     '<div class="tidelist"><div class="tideitem"><span class="k">Forecast surf</span>'+
@@ -1150,8 +1187,13 @@ function initReveal(){
     els.forEach(el=>el.classList.add("is-visible")); return;
   }
   const io=new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){entry.target.classList.add("is-visible"); io.unobserve(entry.target);}
+    // Multiple sections can cross the threshold in the same batch (e.g. everything
+    // above the fold, on first load) - stagger those so they cascade in one after
+    // another instead of all popping in together.
+    entries.filter(e=>e.isIntersecting).forEach((entry,i)=>{
+      entry.target.style.transitionDelay=(i*130)+"ms";
+      entry.target.classList.add("is-visible");
+      io.unobserve(entry.target);
     });
   },{threshold:0,rootMargin:"0px 0px -40px 0px"});
   els.forEach(el=>io.observe(el));
