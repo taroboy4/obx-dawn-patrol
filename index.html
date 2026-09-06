@@ -40,46 +40,63 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
          color:var(--muted);font-weight:700}
 
-/* ---- wave divider: two looping SVG wave layers, replaces the old barber stripe ----
-   Slow and lazy on purpose - this is ambient motion, not something to notice ticking by. */
-.wave-divider{position:relative;height:28px;overflow:hidden;border-radius:2px}
+/* ---- wave divider: three looping SVG wave layers for depth, replaces the old
+   barber stripe. Slow and lazy on purpose - ambient motion, not something to
+   notice ticking by. One crest in the front layer curls into a barrel; since
+   it's baked into the tiling geometry (not a separate timer), it just rolls
+   through with the rest of the loop, twice per lap. ---- */
+.wave-divider{position:relative;height:36px;overflow:hidden;border-radius:2px}
 .wave-divider svg{position:absolute;top:0;left:0;width:200%;height:100%;display:block}
-.wave-divider .wave-back{fill:var(--sea);opacity:.32;animation:waveScroll 46s linear infinite}
-.wave-divider .wave-front{fill:var(--sea);opacity:.9;animation:waveScroll 32s linear infinite reverse}
+.wave-divider .wave-back{fill:var(--sea);opacity:.30;animation:waveScroll 46s linear infinite}
+.wave-divider .wave-mid{fill:var(--sea-text);opacity:.38;animation:waveScroll 38s linear infinite reverse}
+.wave-divider .wave-front{fill:var(--sea);opacity:.92;animation:waveScroll 32s linear infinite reverse}
 @keyframes waveScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-/* ---- scroll reveal: fade + rise, once, for the major sections ----
-   Sections revealed in the same batch (e.g. everything above the fold at first
-   load) get a small staggered transition-delay set inline by initReveal(), so
-   they cascade in one after another instead of all popping in on top of each other. */
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.16,1,.3,1)}
-.reveal.is-visible{opacity:1;transform:translateY(0)}
+/* ---- scroll reveal: fade + rise + a soft focus-pull, once, for every
+   self-contained block (section, hero card, learn card, spot row...) ----
+   Each one is observed INDIVIDUALLY by initReveal() and gets .is-visible the
+   moment it scrolls into view - never inherited from a parent wrapper, which
+   is what silently killed the animation before: a child inserted after its
+   parent was already .is-visible starts at its final state with nothing to
+   transition from. Blocks that cross the threshold in the same batch (e.g.
+   everything above the fold on first load) get a staggered transition-delay
+   set inline by initReveal(), so they cascade one after another. */
+.reveal,.sec,.call,.card,#p-week>.chart,#p-spots>.lede,#p-spots>.notice{
+  opacity:0;transform:translateY(26px) scale(.98);filter:blur(6px);
+  transition:opacity .8s ease,transform .8s cubic-bezier(.16,1,.3,1),filter .8s ease}
+.reveal.is-visible,.sec.is-visible,.call.is-visible,.card.is-visible,
+#p-week>.chart.is-visible,#p-spots>.lede.is-visible,#p-spots>.notice.is-visible{
+  opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
 
-/* ---- row-level cascade: each spot row rises on its own beat, keyed off --ri ---- */
-.row{opacity:0;transform:translateY(18px);
-  transition:opacity .55s ease calc(var(--ri,0)*55ms),transform .55s cubic-bezier(.16,1,.3,1) calc(var(--ri,0)*55ms)}
-.reveal.is-visible .row{opacity:1;transform:translateY(0)}
+/* ---- row-level cascade: each spot row rises on its own beat ---- */
+.row{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s cubic-bezier(.16,1,.3,1)}
+.row.is-visible{opacity:1;transform:translateY(0)}
 
 /* ---- the rating dashes: grow left to right, staggered, once their row lands ---- */
 .d i{opacity:0;transform:scaleX(0);transform-origin:left;transition:opacity .3s ease,transform .3s ease}
-.reveal.is-visible .row .d i{opacity:1;transform:scaleX(1)}
+.row.is-visible .d i{opacity:1;transform:scaleX(1)}
 .row .d i:nth-child(1){transition-delay:calc(var(--ri,0)*55ms + 260ms)}
 .row .d i:nth-child(2){transition-delay:calc(var(--ri,0)*55ms + 330ms)}
 .row .d i:nth-child(3){transition-delay:calc(var(--ri,0)*55ms + 400ms)}
 .row .d i:nth-child(4){transition-delay:calc(var(--ri,0)*55ms + 470ms)}
 
-/* ---- SVG chart motion: solid data rises from the baseline, the dashed
-   reference trace wipes in left to right, like it's being drawn ---- */
-.chart-rise{transform-box:fill-box;transform-origin:bottom;animation:chartRise .9s cubic-bezier(.16,1,.3,1) both}
-.chart-wipe{transform-box:fill-box;transform-origin:left;animation:chartWipe 1.3s cubic-bezier(.16,1,.3,1) both}
+/* ---- SVG chart motion: paused until the section holding the chart actually
+   scrolls into view (not when it's first drawn - most of these are drawn
+   while their tab is still hidden, or before you've scrolled anywhere near
+   them). Once visible: solid data rises from the baseline, the dashed
+   reference trace wipes in left to right, like it's being drawn. ---- */
+.chart-rise{transform-box:fill-box;transform-origin:bottom;animation:chartRise .9s cubic-bezier(.16,1,.3,1) both paused}
+.chart-wipe{transform-box:fill-box;transform-origin:left;animation:chartWipe 1.3s cubic-bezier(.16,1,.3,1) both paused}
+.chart-pop{transform-box:fill-box;transform-origin:center;animation:chartPop .6s cubic-bezier(.34,1.56,.64,1) both paused}
 @keyframes chartRise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes chartWipe{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.chart-pop{transform-box:fill-box;transform-origin:center;animation:chartPop .6s cubic-bezier(.34,1.56,.64,1) both}
 @keyframes chartPop{from{transform:scale(0)}to{transform:scale(1)}}
+:is(.sec,.chart).is-visible :is(.chart-rise,.chart-wipe,.chart-pop){animation-play-state:running}
 
 @media (prefers-reduced-motion: reduce){
   .wave-divider svg{animation:none}
-  .reveal,.row,.d i{opacity:1;transform:none;transition:none}
+  .reveal,.sec,.call,.card,.row,.d i,#p-week>.chart,#p-spots>.lede,#p-spots>.notice{
+    opacity:1;transform:none;filter:none;transition:none}
   .chart-rise,.chart-wipe,.chart-pop{animation:none}
 }
 
@@ -402,8 +419,9 @@ footer a{color:var(--sea-text)}
       <div class="meta" id="meta"></div>
     </div>
     <div class="wave-divider" aria-hidden="true">
-      <svg class="wave-back" viewBox="0 0 1600 28" preserveAspectRatio="none"><path d="M0,12 Q25.0,8.0 50.0,12 T100.0,12 T150.0,12 T200.0,12 T250.0,12 T300.0,12 T350.0,12 T400.0,12 T450.0,12 T500.0,12 T550.0,12 T600.0,12 T650.0,12 T700.0,12 T750.0,12 T800.0,12 T850.0,12 T900.0,12 T950.0,12 T1000.0,12 T1050.0,12 T1100.0,12 T1150.0,12 T1200.0,12 T1250.0,12 T1300.0,12 T1350.0,12 T1400.0,12 T1450.0,12 T1500.0,12 T1550.0,12 T1600.0,12 L1600,28 L0,28 Z"/></svg>
-      <svg class="wave-front" viewBox="0 0 1600 28" preserveAspectRatio="none"><path d="M0,19 Q40.0,12.0 80.0,19 T160.0,19 T240.0,19 T320.0,19 T400.0,19 T480.0,19 T560.0,19 T640.0,19 T720.0,19 T800.0,19 T880.0,19 T960.0,19 T1040.0,19 T1120.0,19 T1200.0,19 T1280.0,19 T1360.0,19 T1440.0,19 T1520.0,19 T1600.0,19 L1600,28 L0,28 Z"/></svg>
+      <svg class="wave-back" viewBox="0 0 1600 36" preserveAspectRatio="none"><path d="M0,11 Q25.0,8.0 50.0,11 T100.0,11 T150.0,11 T200.0,11 T250.0,11 T300.0,11 T350.0,11 T400.0,11 T450.0,11 T500.0,11 T550.0,11 T600.0,11 T650.0,11 T700.0,11 T750.0,11 T800.0,11 T850.0,11 T900.0,11 T950.0,11 T1000.0,11 T1050.0,11 T1100.0,11 T1150.0,11 T1200.0,11 T1250.0,11 T1300.0,11 T1350.0,11 T1400.0,11 T1450.0,11 T1500.0,11 T1550.0,11 T1600.0,11 L1600,36 L0,36 Z"/></svg>
+      <svg class="wave-mid" viewBox="0 0 1600 36" preserveAspectRatio="none"><path d="M0,18 Q50.0,12.0 100.0,18 T200.0,18 T300.0,18 T400.0,18 T500.0,18 T600.0,18 T700.0,18 T800.0,18 T900.0,18 T1000.0,18 T1100.0,18 T1200.0,18 T1300.0,18 T1400.0,18 T1500.0,18 T1600.0,18 L1600,36 L0,36 Z"/></svg>
+      <svg class="wave-front" viewBox="0 0 1600 36" preserveAspectRatio="none"><path fill-rule="evenodd" d="M0,25 Q40.0,17.0 80.0,25 T240.0,25 C348.0,25 342.0,-5.0 378.0,-7.0 C398.0,-8.0 412.0,3.0 400.0,13.0 C392.0,20.0 382.0,16.0 386.0,9.0 C390.0,4.0 400.0,7.0 410.0,17.0 C420.0,25.0 440.0,31.0 460.0,27.0 C468.0,26.0 475.0,25.0 480.0,25 Q520.0,17.0 560.0,25 T720.0,25 L800,36 L0,36 Z M384.0,10.0 C384.0,7.2 387.6,5.0 392.0,5.0 C396.4,5.0 400.0,7.2 400.0,10.0 C400.0,12.8 396.4,15.0 392.0,15.0 C387.6,15.0 384.0,12.8 384.0,10.0 Z M800,25 Q840.0,17.0 880.0,25 T1040.0,25 C1148.0,25 1142.0,-5.0 1178.0,-7.0 C1198.0,-8.0 1212.0,3.0 1200.0,13.0 C1192.0,20.0 1182.0,16.0 1186.0,9.0 C1190.0,4.0 1200.0,7.0 1210.0,17.0 C1220.0,25.0 1240.0,31.0 1260.0,27.0 C1268.0,26.0 1275.0,25.0 1280.0,25 Q1320.0,17.0 1360.0,25 T1520.0,25 L1600,36 L800,36 Z M1184.0,10.0 C1184.0,7.2 1187.6,5.0 1192.0,5.0 C1196.4,5.0 1200.0,7.2 1200.0,10.0 C1200.0,12.8 1196.4,15.0 1192.0,15.0 C1187.6,15.0 1184.0,12.8 1184.0,10.0 Z"/></svg>
     </div>
   </header>
 
@@ -1064,6 +1082,7 @@ function render(D){
     '<div class="gterm"><div class="g">'+esc(g[0])+'</div><div class="b">'+esc(g[1])+'</div>'+
     '<div class="have'+(g[2]?"":" no")+'">'+esc(g[2]?"On this page: "+g[3]:"Not here: "+g[3])+'</div></div>').join("");
   $("srcnote").textContent=D.sourceNote||"";
+  initReveal(); // daypanels/zones were just rebuilt wholesale - observe the fresh nodes
 }
 
 function windTrend(day,sp){
@@ -1181,17 +1200,21 @@ function sourceBanner(D){
     bad.map(k=>esc(k)).join(", ")+' failed on the last run, so those figures are carried over from '+
     'the previous update. Everything else is current.</div>';
 }
+const REVEAL_SEL=".reveal,.sec,.call,.card,.row,#p-week>.chart,#p-spots>.lede,#p-spots>.notice";
 function initReveal(){
-  const els=document.querySelectorAll(".reveal");
+  // Called again after every render() rebuilds daypanels/zones, since those are
+  // torn down and recreated wholesale (innerHTML) - anything selected here needs
+  // its own fresh observation, not just whatever was already .is-visible.
+  const els=[...document.querySelectorAll(REVEAL_SEL)].filter(el=>!el.classList.contains("is-visible"));
   if(!("IntersectionObserver" in window)||matchMedia("(prefers-reduced-motion: reduce)").matches){
     els.forEach(el=>el.classList.add("is-visible")); return;
   }
   const io=new IntersectionObserver((entries)=>{
-    // Multiple sections can cross the threshold in the same batch (e.g. everything
-    // above the fold, on first load) - stagger those so they cascade in one after
-    // another instead of all popping in together.
+    // Multiple blocks can cross the threshold in the same batch (e.g. everything
+    // above the fold, on first load, or several spot rows at once) - stagger
+    // those so they cascade in one after another instead of all popping in together.
     entries.filter(e=>e.isIntersecting).forEach((entry,i)=>{
-      entry.target.style.transitionDelay=(i*130)+"ms";
+      entry.target.style.transitionDelay=(Math.min(i,7)*90)+"ms";
       entry.target.classList.add("is-visible");
       io.unobserve(entry.target);
     });
